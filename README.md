@@ -6,4 +6,4 @@ libglfw3-dev
 libxinerama-dev
 libxcursor-dev
 libxi-dev
-
+libglew-dev
