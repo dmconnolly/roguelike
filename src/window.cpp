@@ -30,12 +30,10 @@ Window::~Window() {
 /// Initialise Renderer instance \n
 /// Enter event loop \n
 void Window::start() {
-	
-
 	if(glfwInit() != GLFW_TRUE) {
+		std::cerr << "glfwInit() failed. Exiting\n";
 		exit(EXIT_FAILURE);
 	}
-
 
 	// Window hints
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

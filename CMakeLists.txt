@@ -17,4 +17,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/glfw)
 include_directories(${CMAKE_SOURCE_DIR}/glfw/include)
 
 add_executable(run src/glew.c src/main.cpp src/window.cpp)
-target_link_libraries(run opengl32 glfw ${GLFW_LIBRARIES})
+
+# OpenGL
+if(WIN32)
+    target_link_libraries(run opengl32)
+else()
+    target_link_libraries(run GL)
+endif()
+
+# GLFW
+target_link_libraries(run glfw ${GLFW_LIBRARIES})
