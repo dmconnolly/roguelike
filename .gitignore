@@ -51,3 +51,6 @@ build
 # VS Code project files
 .vscode
 *.code-workspace
+
+# VS project files
+.vs

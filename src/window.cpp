@@ -1,7 +1,5 @@
 #include <cstdlib>
 
-#include "GL/glew.h"
-
 //#include "utils.hpp"
 #include "window.hpp"
 
@@ -32,16 +30,17 @@ Window::~Window() {
 /// Initialise Renderer instance \n
 /// Enter event loop \n
 void Window::start() {
-    /* Initialise glew */
-    if(glewInit()) {
-        std::cerr << "glewInit() failed. Exiting\n";
-        exit(EXIT_FAILURE);
-    }
+	
 
-    glfwWindowHint(GLFW_SAMPLES, 16);
+	if(glfwInit() != GLFW_TRUE) {
+		exit(EXIT_FAILURE);
+	}
 
-    /* Obtain an OpenGL context and assign to the GLFW window */
-    glfwMakeContextCurrent(glfw_window);
+
+	// Window hints
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
     // Create glfw window
     glfw_window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -51,20 +50,29 @@ void Window::start() {
         exit(EXIT_FAILURE);
     }
 
+	// Set callbacks
+	glfwSetErrorCallback(error_callback);
+	glfwSetFramebufferSizeCallback(glfw_window, reshape_callback);
+	glfwSetCursorPosCallback(glfw_window, mouse_callback);
+	glfwSetKeyCallback(glfw_window, key_callback);
+
+	glfwMakeContextCurrent(glfw_window);
+
     // Turn on sticky keys
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 
     // Normal cursor
     glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-    // Set callbacks
-    glfwSetErrorCallback(error_callback);
-    glfwSetFramebufferSizeCallback(glfw_window, reshape_callback);
-    glfwSetKeyCallback(glfw_window, key_callback);
-    glfwSetCursorPosCallback(glfw_window, mouse_callback);
-
     // Store pointer in glfw window to this object
     glfwSetWindowUserPointer(glfw_window, this);
+
+	/* Initialise glew */
+	glewExperimental = true;
+	if(glewInit() != GLEW_OK) {
+		std::cerr << "glewInit() failed. Exiting\n";
+		exit(EXIT_FAILURE);
+	}
 
     // Show startup screen
     startup_screen();

@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 //#include "renderer.hpp"
@@ -39,7 +40,6 @@ private:
     //Game game;
 
     void startup_screen();
-    void print_controls() const;
 
     void input_key(int key, int action);
     void check_input_frame(bool *keys);
