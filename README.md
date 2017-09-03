@@ -7,3 +7,5 @@ libxinerama-dev
 libxcursor-dev
 libxi-dev
 libglew-dev
+xorg-dev
+libglu1-mesa-dev
