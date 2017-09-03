@@ -9,21 +9,19 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
+add_executable(${PROJECT_NAME}
+	src/main.cpp
+	src/window.cpp
+)
+
 # GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/glfw)
 include_directories(${CMAKE_SOURCE_DIR}/glfw/include)
+target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
-add_executable(run src/glew.c src/main.cpp src/window.cpp)
-
-# OpenGL
-if(WIN32)
-    target_link_libraries(run opengl32)
-else()
-    target_link_libraries(run GL)
-endif()
-
-# GLFW
-target_link_libraries(run glfw ${GLFW_LIBRARIES})
+# GLBinding
+add_subdirectory(${CMAKE_SOURCE_DIR}/glbinding)
+target_link_libraries(${PROJECT_NAME} glbinding)

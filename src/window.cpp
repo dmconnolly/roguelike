@@ -1,5 +1,8 @@
 #include <cstdlib>
 
+#include "glbinding/gl/functions.h"
+#include "glbinding/gl/enum.h"
+
 //#include "utils.hpp"
 #include "window.hpp"
 
@@ -9,14 +12,13 @@ Window::Window() :
     width(1024),
     height(768),
     title("Roguelike")
-    //game()
 {
     /* Empty */
 }
 
 /// Minimal destructor
 Window::~Window() {
-    //delete renderer;
+   // delete renderer;
 }
 
 /// Initialises the window
@@ -65,12 +67,8 @@ void Window::start() {
     // Store pointer in glfw window to this object
     glfwSetWindowUserPointer(glfw_window, this);
 
-	/* Initialise glew */
-	glewExperimental = true;
-	if(glewInit() != GLEW_OK) {
-		std::cerr << "glewInit() failed. Exiting\n";
-		exit(EXIT_FAILURE);
-	}
+	/* Initialise OpenGL bindings */
+	glbinding::Binding::initialize();
 
     // Show startup screen
     startup_screen();
@@ -92,10 +90,9 @@ void Window::reset() {
 
 /// Show startup screen
 void Window::startup_screen() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glViewport(0, 0, width, height);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	gl::glViewport(0, 0, width, height);
+	gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, 0);
     glfwSwapBuffers(glfw_window);
 }
 
@@ -108,7 +105,6 @@ void Window::startup_screen() {
 void Window::event_loop() {
     while(!glfwWindowShouldClose(glfw_window)) {
         check_input_frame(keys);
-        //renderer->draw(game.get_state());
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
@@ -126,13 +122,6 @@ void Window::input_key(int key, int action) {
     if(action != GLFW_PRESS && action != GLFW_REPEAT) {
         return;
     }
-
-    // switch(key) {
-    //     case GLFW_KEY_TAB:
-    //         renderer->cycle_draw_mode();
-    //     default:
-    //         game.handle_input(key, action);
-    // }
 }
 
 /// Handle key presses on a per-frame basis

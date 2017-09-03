@@ -4,11 +4,10 @@
 
 #include <iostream>
 
-#include "GL/glew.h"
+#include "glbinding/Binding.h"
 #include "GLFW/glfw3.h"
 
 //#include "renderer.hpp"
-//#include "game.hpp"
 
 /// Handles the glfw window
 
@@ -36,8 +35,6 @@ private:
     char title[256];
     /// Pointer to glfw window
     GLFWwindow *glfw_window;
-    /// Game controller
-    //Game game;
 
     void startup_screen();
 
@@ -72,13 +69,13 @@ private:
     inline static void reshape_callback(GLFWwindow *glfw_window, int width, int height) {
         Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
         glViewport(0, 0, width, height);
-        //window->renderer->set_window_size(width, height);
+       // window->renderer->set_window_size(width, height);
     }
 
     /// Callback for mouse movement
     inline static void mouse_callback(GLFWwindow *glfw_window, double mouse_x, double mouse_y) {
         Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
-        //window->renderer->move_mouse(mouse_x, mouse_y);
+       // window->renderer->move_mouse(mouse_x, mouse_y);
     }
 };
 
