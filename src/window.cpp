@@ -3,23 +3,7 @@
 #include "glbinding/gl/functions.h"
 #include "glbinding/gl/enum.h"
 
-//#include "utils.hpp"
 #include "window.hpp"
-
-/// Minimal constructor
-Window::Window() :
-    cursor_locked(false),
-    width(1024),
-    height(768),
-    title("Roguelike")
-{
-    /* Empty */
-}
-
-/// Minimal destructor
-Window::~Window() {
-   // delete renderer;
-}
 
 /// Initialises the window
 
@@ -32,6 +16,9 @@ Window::~Window() {
 /// Initialise Renderer instance \n
 /// Enter event loop \n
 void Window::start() {
+    // Set error callback
+    glfwSetErrorCallback(error_callback);
+
 	if(glfwInit() != GLFW_TRUE) {
 		std::cerr << "glfwInit() failed. Exiting\n";
 		exit(EXIT_FAILURE);
@@ -50,10 +37,9 @@ void Window::start() {
         exit(EXIT_FAILURE);
     }
 
-	// Set callbacks
-	glfwSetErrorCallback(error_callback);
-	glfwSetFramebufferSizeCallback(glfw_window, reshape_callback);
-	glfwSetCursorPosCallback(glfw_window, mouse_callback);
+	// Set event callbacks
+    glfwSetMouseButtonCallback(glfw_window, mouse_click_callback);
+	glfwSetFramebufferSizeCallback(glfw_window, resize_callback);
 	glfwSetKeyCallback(glfw_window, key_callback);
 
 	glfwMakeContextCurrent(glfw_window);
@@ -67,33 +53,11 @@ void Window::start() {
     // Store pointer in glfw window to this object
     glfwSetWindowUserPointer(glfw_window, this);
 
-	/* Initialise OpenGL bindings */
-	glbinding::Binding::initialize();
-
-    // Show startup screen
-    startup_screen();
-
-    // Initialise renderer
-    //renderer = new Renderer(width, height);
+    // Initialise game controller just before entering event loop
+    game_controller = std::make_unique<GameController>();
 
     // Enter event loop
     event_loop();
-}
-
-/// Reset the scene with new values
-void Window::reset() {
-    //delete renderer;
-
-    // Initialise renderer
-    //renderer = new Renderer(width, height);
-}
-
-/// Show startup screen
-void Window::startup_screen() {
-	gl::glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	gl::glViewport(0, 0, width, height);
-	gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, 0);
-    glfwSwapBuffers(glfw_window);
 }
 
 /// Main event loop
@@ -108,36 +72,30 @@ void Window::event_loop() {
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
-
     glfwTerminate();
 }
 
-/// Handle key presses when an event is triggered
-
-/// This method is not called every frame, but only when \n
-/// the key is pressed, release or repeated. This means that \n
-/// there will be delays if a key is held down. This makes this \n
-/// method ideal for controls such as toggling options.
-void Window::input_key(int key, int action) {
-    if(action != GLFW_PRESS && action != GLFW_REPEAT) {
-        return;
-    }
+void Window::error_callback(int error, const char *description) {
+    std::cerr << "GLFW error: " << error << " - " << description << '\n';
 }
 
-/// Handle key presses on a per-frame basis
+void Window::key_callback(
+    GLFWwindow *glfw_window,
+    int key, int scan_code,
+    int action, int mods)
+{
+    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+    window.game_controller.key_input(key, scan_code, mods, action);
+}
 
-/// This method is called every frame and takes an array of booleans \n
-/// as a parameter, each bool represents whether a specific key is \n
-/// currently pressed. As a result, this function allows actions to take \n
-/// place every frame. This is ideal for smooth movement controls such as \n
-/// moving the camera or light source.\n\n
-/// Movement triggered through this function should use the frame delta time \n
-/// to ensure that movement speed is the same across different platforms.
-void Window::check_input_frame(bool *keys) {
-    // if(keys[GLFW_KEY_KP_8]) {  }
-    // if(keys[GLFW_KEY_KP_5]) {  }
-    // if(keys[GLFW_KEY_KP_4]) {  }
-    // if(keys[GLFW_KEY_KP_6]) {  }
-    // if(keys[GLFW_KEY_KP_7]) {  }
-    // if(keys[GLFW_KEY_KP_9]) {  }
+void Window::resize_callback(GLFWwindow *glfw_window, int width, int height) {
+    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+    window.game_controller.window_resize(width, height);
+}
+
+void Window::mouse_click_callback(GLFWwindow *window, int button, int action, int mods) {
+    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    window.game_controller.mouse_click(button, action, mods, x, y);
 }
