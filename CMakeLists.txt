@@ -12,6 +12,9 @@ SET(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(${PROJECT_NAME}
 	src/main.cpp
 	src/window.cpp
+	src/controller.cpp
+	src/renderer.cpp
+	src/game_interface.cpp
 )
 
 # GLFW

@@ -1,9 +1,14 @@
 #include <cstdlib>
 
-#include "glbinding/gl/functions.h"
-#include "glbinding/gl/enum.h"
+#include "glbinding/Binding.h"
 
 #include "window.hpp"
+
+Window::Window() :
+	title("Roguelike")
+{
+	/* Empty */
+}
 
 /// Initialises the window
 
@@ -30,7 +35,7 @@ void Window::start() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
     // Create glfw window
-    glfw_window = glfwCreateWindow(width, height, title, NULL, NULL);
+    glfw_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if(!glfw_window) {
         std::cerr << "GLFW failed to create window\n";
         glfwTerminate();
@@ -53,8 +58,11 @@ void Window::start() {
     // Store pointer in glfw window to this object
     glfwSetWindowUserPointer(glfw_window, this);
 
-    // Initialise game controller just before entering event loop
-    game_controller = std::make_unique<GameController>();
+	// Initialise OpenGL bindings
+	glbinding::Binding::initialize();
+
+    // Initialise controller object before entering event loop
+    controller = std::make_unique<Controller>(width, height);
 
     // Enter event loop
     event_loop();
@@ -68,7 +76,6 @@ void Window::start() {
 /// Poll for new events
 void Window::event_loop() {
     while(!glfwWindowShouldClose(glfw_window)) {
-        check_input_frame(keys);
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
@@ -84,18 +91,18 @@ void Window::key_callback(
     int key, int scan_code,
     int action, int mods)
 {
-    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
-    window.game_controller.key_input(key, scan_code, mods, action);
+    Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+    window->controller->key_input(key, scan_code, mods, action);
 }
 
 void Window::resize_callback(GLFWwindow *glfw_window, int width, int height) {
-    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
-    window.game_controller.window_resize(width, height);
+    Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+    window->controller->window_resize(width, height);
 }
 
-void Window::mouse_click_callback(GLFWwindow *window, int button, int action, int mods) {
-    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
+void Window::mouse_click_callback(GLFWwindow *glfw_window, int button, int action, int mods) {
+    Window *window = static_cast<Window *>(glfwGetWindowUserPointer(glfw_window));
     double x, y;
-    glfwGetCursorPos(window, &x, &y);
-    window.game_controller.mouse_click(button, action, mods, x, y);
+    glfwGetCursorPos(glfw_window, &x, &y);
+    window->controller->mouse_click(button, action, mods, x, y);
 }

@@ -2,13 +2,16 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
+#include "glm/glm.hpp"
+
 class Renderer {
 public:
-    Renderer();
+	Renderer(const glm::ivec2 window_size);
     ~Renderer() = default;
-    void window_resize(const int width, const int height);
+    void window_resize(const glm::ivec2 window_size);
+
 private:
-    /* Empty */
+	glm::ivec2 window_size;
 };
 
 #endif /* RENDERER */

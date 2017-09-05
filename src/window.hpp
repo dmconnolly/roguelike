@@ -3,28 +3,28 @@
 #define WINDOW_HPP
 
 #include <iostream>
+#include <memory>
 #include <string>
 
-#include "glbinding/Binding.h"
+#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
-#include "game_controller.hpp"
+#include "controller.hpp"
 
 class Window {
 public:
-    std::unique_ptr<GameController> game_controller;
+    std::unique_ptr<Controller> controller;
 
-    Window() = default;
+    Window();
     ~Window() = default;
     void start();
 private:
     int width = 1024;
     int height = 768;
-    std::string = "Roguelike";
+    std::string title;
     GLFWwindow *glfw_window = nullptr;
     bool cursor_locked = false;
 
-    void check_input_frame();
     void event_loop();
 
     /// Callback for errors

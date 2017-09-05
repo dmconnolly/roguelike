@@ -3,14 +3,18 @@
 #define GAME_CONTROLLER_HPP
 
 #include <array>
+#include <memory>
 
-class GameController{
+#include "glm/glm.hpp"
+
+#include "renderer.hpp"
+
+class GameInterface {
 public:
-    GameController();
-    ~GameController() = default;
+    GameInterface(Renderer &renderer);
+    ~GameInterface() = default;
 
     /* Event handlers */
-    void window_resize(const int width, const int height);
     void key_input(const int key, const int scan_code,
         const int mods, const int action
     );
@@ -19,11 +23,7 @@ public:
     );
 
 private:
-    Renderer renderer;
-
-    /* Keys pressed on current frame */
-    const static max_keys = 348;
-    std::array<bool, max_keys> keys = { false };
+	Renderer &renderer;
 };
 
 #endif /* GAME_CONTROLLER_HPP */
