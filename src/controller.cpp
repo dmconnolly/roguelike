@@ -7,7 +7,11 @@ Controller::Controller(const int width, const int height) :
 	window_size(glm::ivec2(width, height))
 {
 	renderer = std::make_unique<Renderer>(window_size);
-	game_interface = std::make_unique<GameInterface>(*renderer);
+	game_controller = std::make_unique<GameController>(*renderer);
+}
+
+void Controller::step() {
+	game_controller->step();
 }
 
 void Controller::window_resize(const int width, const int height) {

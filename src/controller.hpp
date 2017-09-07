@@ -8,12 +8,14 @@
 #include "glm/glm.hpp"
 
 #include "renderer.hpp"
-#include "game_interface.hpp"
+#include "game_controller.hpp"
 
 class Controller {
 public:
 	Controller(const int width, const int height);
 	~Controller() = default;
+
+	void step();
 
 	/* Event handlers */
 	void window_resize(const int width, const int height);
@@ -27,7 +29,7 @@ public:
 private:
 	glm::ivec2 window_size;
 	std::unique_ptr<Renderer> renderer;
-	std::unique_ptr<GameInterface> game_interface;
+	std::unique_ptr<GameController> game_controller;
 
 	/* Keys pressed on current frame */
 	const static unsigned int max_keys = 348;

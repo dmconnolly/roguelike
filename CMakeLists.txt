@@ -14,7 +14,10 @@ add_executable(${PROJECT_NAME}
 	src/window.cpp
 	src/controller.cpp
 	src/renderer.cpp
-	src/game_interface.cpp
+	src/game_controller.cpp
+	src/game.cpp
+	src/tile_map.cpp
+	src/tile.cpp
 )
 
 # GLFW

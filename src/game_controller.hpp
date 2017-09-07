@@ -8,11 +8,14 @@
 #include "glm/glm.hpp"
 
 #include "renderer.hpp"
+#include "game.hpp"
 
-class GameInterface {
+class GameController {
 public:
-    GameInterface(Renderer &renderer);
-    ~GameInterface() = default;
+	GameController(Renderer &renderer);
+    ~GameController() = default;
+
+	void step();
 
     /* Event handlers */
     void key_input(const int key, const int scan_code,
@@ -24,6 +27,7 @@ public:
 
 private:
 	Renderer &renderer;
+	Game game;
 };
 
 #endif /* GAME_CONTROLLER_HPP */
