@@ -10,10 +10,6 @@ Controller::Controller(const int width, const int height) :
 	game_controller = std::make_unique<GameController>(*renderer);
 }
 
-void Controller::step() {
-	game_controller->step();
-}
-
 void Controller::window_resize(const int width, const int height) {
 	window_size.x = width;
 	window_size.y = height;

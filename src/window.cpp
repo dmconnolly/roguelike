@@ -76,7 +76,6 @@ void Window::start() {
 /// Poll for new events
 void Window::event_loop() {
     while(!glfwWindowShouldClose(glfw_window)) {
-		controller->step();
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }

@@ -54,3 +54,4 @@ build
 
 # VS project files
 .vs
+CMakeSettings.json

@@ -9,11 +9,7 @@ GameController::GameController(Renderer &renderer) :
 	renderer(renderer),
 	game()
 {
-	/* Empty */
-}
-
-void GameController::step() {
-	game.step();
+	game.start();
 }
 
 void GameController::mouse_click(const int button, const int action,
@@ -25,5 +21,5 @@ void GameController::mouse_click(const int button, const int action,
 void GameController::key_input(const int key, const int scan_code,
     const int mods, const int action)
 {
-	/* Empty */
+	game.step();
 }

@@ -17,6 +17,15 @@ public:
 
     Window();
     ~Window() = default;
+
+	/* Delete copy constructors operators */
+	Window(const Window &rhs) = delete;
+	Window(Window &&rhs) = delete;
+
+	/* Delete implicit assignment operators */
+	Window& operator=(const Window &rhs) = delete;
+	Window& operator=(Window &&rhs) = delete;
+
     void start();
 private:
     int width = 1024;

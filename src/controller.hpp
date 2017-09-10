@@ -15,7 +15,13 @@ public:
 	Controller(const int width, const int height);
 	~Controller() = default;
 
-	void step();
+	/* Delete copy constructors operators */
+	Controller(const Controller &rhs) = delete;
+	Controller(Controller &&rhs) = delete;
+
+	/* Delete implicit assignment operators */
+	Controller& operator=(const Controller &rhs) = delete;
+	Controller& operator=(Controller &&rhs) = delete;
 
 	/* Event handlers */
 	void window_resize(const int width, const int height);

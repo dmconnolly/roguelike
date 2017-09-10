@@ -1,9 +1,11 @@
 #include "game.hpp"
 
-Game::Game() :
-	tile_map(100, 100)
-{
+Game::Game() {
 	/* Empty */
+}
+
+void Game::start() {
+	tile_map.generate(2, 2);
 }
 
 void Game::step() {
