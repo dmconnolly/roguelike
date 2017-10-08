@@ -8,6 +8,7 @@
 
 class Tile {
 public:
+	const bool discovered;
 	const unsigned x;
 	const unsigned y;
     const Terrain *terrain;
@@ -19,8 +20,8 @@ public:
 	~Tile() = default;
 
 	/* Operator overloads */
-	Tile& operator=(const Tile &rhs);
-	Tile& operator=(Tile &&rhs);
+	Tile& operator=(const Tile &rhs) = delete;
+	Tile& operator=(Tile &&rhs) = delete;
 };
 
 #endif /* TILE_HPP */

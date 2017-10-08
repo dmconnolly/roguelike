@@ -11,10 +11,10 @@ public:
 		const bool pathable_flying,
 		const char ascii_char,
 		const bool map_edge) :
-		pathable(pathable),
-		pathable_flying(pathable_flying),
-		ascii_char(ascii_char),
-		map_edge(map_edge)
+	pathable(pathable),
+	pathable_flying(pathable_flying),
+	ascii_char(ascii_char),
+	map_edge(map_edge)
 	{
 		/* Empty */
 	}

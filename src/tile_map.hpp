@@ -3,7 +3,6 @@
 #define TILE_MAP_HPP
 
 #include <map>
-#include <array>
 #include <vector>
 
 #include "tile.hpp"
@@ -18,8 +17,8 @@ public:
 		South, SouthWest,
 		West, NorthWest
 	};
-	static const std::array<const Direction, 8> directions;
-	static const std::array<const Direction, 4> cardinal_directions;
+	static const std::vector<Direction> directions;
+	static const std::vector<Direction> cardinal_directions;
 
 	enum class TerrainType : unsigned char {
 		MapEdge, StoneWall, StoneFloor
@@ -41,10 +40,13 @@ public:
 
 	/* Get tile by index */
 	Tile& get(const unsigned x, const unsigned y);
-	Tile& get(Tile &tile, const Direction direction);
 
 	/* Get tile in direction from another tile */
-	const Tile& get(const Tile &tile, const Direction direction);
+	Tile& get(Tile &tile, const Direction direction) const;
+	const Tile& get(const Tile &tile, const Direction direction) const;
+
+	/* Get terrain pointer */
+	static const Terrain * const get(const TerrainType terrain);
 
 	/* Generate a new tilemap */
 	void generate(const unsigned width, const unsigned height);
@@ -56,20 +58,27 @@ public:
 	void load();
 
 	/* Returns a path between start and end */
-	std::vector<const Tile *> get_path(Tile &start, Tile &end, bool diagonal_movement=false);
+	std::vector<Tile *> get_path(
+		Tile &start, Tile &end,
+		bool (*tile_pathable)(const Tile &),
+		const bool diagonal_movement=false
+	) const;
+
+	void print();
 
 private:
 	unsigned width;
 	unsigned height;
 	unsigned tile_count;
-	std::map<const Direction, const long long> tile_direction_offset;
+	std::map<const Direction, const long> tile_direction_offset;
 	static const std::map<const TerrainType, const Terrain> terrains;
-	
+
 	std::vector<Tile> tiles;
 
 	void init(const unsigned width, const unsigned height);
 	void init_tiles();
-	void print();
+	unsigned manhattan_distance(const Tile &start, const Tile &end) const;
+	unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
 };
 
 #endif /* TILE_MAP_HPP */
