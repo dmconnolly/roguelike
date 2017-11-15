@@ -55,3 +55,7 @@ build
 # VS project files
 .vs
 CMakeSettings.json
+
+# Sublime text project files
+.sublime-project
+.sublime-workspace
