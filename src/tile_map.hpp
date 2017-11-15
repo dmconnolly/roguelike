@@ -10,75 +10,75 @@
 
 class TileMap {
 public:
-	/* Static data */
-	enum class Direction : unsigned char {
-		North, NorthEast,
-		East, SouthEast,
-		South, SouthWest,
-		West, NorthWest
-	};
-	static const std::vector<Direction> directions;
-	static const std::vector<Direction> cardinal_directions;
+    /* Static data */
+    enum class Direction : unsigned char {
+        North, NorthEast,
+        East, SouthEast,
+        South, SouthWest,
+        West, NorthWest
+    };
+    static const std::vector<Direction> directions;
+    static const std::vector<Direction> cardinal_directions;
 
-	enum class TerrainType : unsigned char {
-		MapEdge, StoneWall, StoneFloor
-	};
+    enum class TerrainType : unsigned char {
+        MapEdge, StoneWall, StoneFloor
+    };
 
-	/* Constructor */
-	TileMap() = default;
+    /* Constructor */
+    TileMap() = default;
 
-	/* Destructor */
-	~TileMap() = default;
+    /* Destructor */
+    ~TileMap() = default;
 
-	/* Delete copy constructors */
-	TileMap(const TileMap &rhs) = delete;
-	TileMap(TileMap &&rhs) = delete;
+    /* Delete copy constructors */
+    TileMap(const TileMap &rhs) = delete;
+    TileMap(TileMap &&rhs) = delete;
 
-	/* Delete implicit assignment operators */
-	TileMap& operator=(const TileMap &rhs) = delete;
-	TileMap& operator=(TileMap &&rhs) = delete;
+    /* Delete implicit assignment operators */
+    TileMap& operator=(const TileMap &rhs) = delete;
+    TileMap& operator=(TileMap &&rhs) = delete;
 
-	/* Get tile by index */
-	Tile& get(const unsigned x, const unsigned y);
+    /* Get tile by index */
+    Tile& get(const unsigned x, const unsigned y);
 
-	/* Get tile in direction from another tile */
-	Tile& get(Tile &tile, const Direction direction) const;
-	const Tile& get(const Tile &tile, const Direction direction) const;
+    /* Get tile in direction from another tile */
+    Tile& get(Tile &tile, const Direction direction) const;
+    const Tile& get(const Tile &tile, const Direction direction) const;
 
-	/* Get terrain pointer */
-	static const Terrain * const get(const TerrainType terrain);
+    /* Get terrain pointer */
+    static const Terrain * const get(const TerrainType terrain);
 
-	/* Generate a new tilemap */
-	void generate(const unsigned width, const unsigned height);
+    /* Generate a new tilemap */
+    void generate(const unsigned width, const unsigned height);
 
-	/* Save the tilemap to file */
-	void save();
+    /* Save the tilemap to file */
+    void save();
 
-	/* Load the tilemap from file */
-	void load();
+    /* Load the tilemap from file */
+    void load();
 
-	/* Returns a path between start and end */
-	std::vector<Tile *> get_path(
-		Tile &start, Tile &end,
-		bool (*tile_pathable)(const Tile &),
-		const bool diagonal_movement=false
-	) const;
+    /* Returns a path between start and end */
+    std::vector<Tile *> get_path(
+        Tile &start, Tile &end,
+        bool (*tile_pathable)(const Tile &),
+        const bool diagonal_movement=false
+    ) const;
 
-	void print();
+    void print();
 
 private:
-	unsigned width;
-	unsigned height;
-	unsigned tile_count;
-	std::map<const Direction, const long> tile_direction_offset;
-	static const std::map<const TerrainType, const Terrain> terrains;
+    unsigned width;
+    unsigned height;
+    unsigned tile_count;
+    std::map<const Direction, const long> tile_direction_offset;
+    static const std::map<const TerrainType, const Terrain> terrains;
 
-	std::vector<Tile> tiles;
+    std::vector<Tile> tiles;
 
-	void init(const unsigned width, const unsigned height);
-	void init_tiles();
-	unsigned manhattan_distance(const Tile &start, const Tile &end) const;
-	unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
+    void init(const unsigned width, const unsigned height);
+    void init_tiles();
+    unsigned manhattan_distance(const Tile &start, const Tile &end) const;
+    unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
 };
 
 #endif /* TILE_MAP_HPP */

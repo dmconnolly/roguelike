@@ -6,10 +6,10 @@
 #include "game_controller.hpp"
 
 GameController::GameController(Renderer &renderer) :
-	renderer(renderer),
-	game()
+    renderer(renderer),
+    game()
 {
-	game.start();
+    game.start();
 }
 
 void GameController::mouse_click(const int button, const int action,
@@ -21,5 +21,5 @@ void GameController::mouse_click(const int button, const int action,
 void GameController::key_input(const int key, const int scan_code,
     const int mods, const int action)
 {
-	game.step();
+    game.step();
 }

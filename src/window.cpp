@@ -5,9 +5,9 @@
 #include "window.hpp"
 
 Window::Window() :
-	title("Roguelike")
+    title("Roguelike")
 {
-	/* Empty */
+    /* Empty */
 }
 
 /// Initialises the window
@@ -24,15 +24,15 @@ void Window::start() {
     // Set error callback
     glfwSetErrorCallback(error_callback);
 
-	if(glfwInit() != GLFW_TRUE) {
-		std::cerr << "glfwInit() failed. Exiting\n";
-		exit(EXIT_FAILURE);
-	}
+    if(glfwInit() != GLFW_TRUE) {
+        std::cerr << "glfwInit() failed. Exiting\n";
+        exit(EXIT_FAILURE);
+    }
 
-	// Window hints
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    // Window hints
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
     // Create glfw window
     glfw_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
@@ -42,12 +42,12 @@ void Window::start() {
         exit(EXIT_FAILURE);
     }
 
-	// Set event callbacks
+    // Set event callbacks
     glfwSetMouseButtonCallback(glfw_window, mouse_click_callback);
-	glfwSetFramebufferSizeCallback(glfw_window, resize_callback);
-	glfwSetKeyCallback(glfw_window, key_callback);
+    glfwSetFramebufferSizeCallback(glfw_window, resize_callback);
+    glfwSetKeyCallback(glfw_window, key_callback);
 
-	glfwMakeContextCurrent(glfw_window);
+    glfwMakeContextCurrent(glfw_window);
 
     // Turn on sticky keys
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
@@ -58,8 +58,8 @@ void Window::start() {
     // Store pointer in glfw window to this object
     glfwSetWindowUserPointer(glfw_window, this);
 
-	// Initialise OpenGL bindings
-	glbinding::Binding::initialize();
+    // Initialise OpenGL bindings
+    glbinding::Binding::initialize();
 
     // Initialise controller object before entering event loop
     controller = std::make_unique<Controller>(width, height);

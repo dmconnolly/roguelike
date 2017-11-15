@@ -6,22 +6,22 @@
 
 class Game {
 public:
-	Game();
-	~Game() = default;
+    Game();
+    ~Game() = default;
 
-	/* Delete copy constructors operators */
-	Game(const Game &rhs) = delete;
-	Game(Game &&rhs) = delete;
+    /* Delete copy constructors operators */
+    Game(const Game &rhs) = delete;
+    Game(Game &&rhs) = delete;
 
-	/* Delete implicit assignment operators */
-	Game& operator=(const Game &rhs) = delete;
-	Game& operator=(Game &&rhs) = delete;
+    /* Delete implicit assignment operators */
+    Game& operator=(const Game &rhs) = delete;
+    Game& operator=(Game &&rhs) = delete;
 
-	void start();
-	void step();
+    void start();
+    void step();
 
 private:
-	TileMap tile_map;
+    TileMap tile_map;
 };
 
 #endif /* GAME_HPP */
