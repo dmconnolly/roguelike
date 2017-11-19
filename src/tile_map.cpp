@@ -104,8 +104,8 @@ void TileMap::init_tiles() {
         for(unsigned x=0; x<width+2; ++x) {
             if(x==0 || x==width+1 || y==0 || y==height+1) {
                 tiles.push_back(Tile(
-                    static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()),
-                    static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()),
+                    std::numeric_limits<decltype(x)>::max(),
+                    std::numeric_limits<decltype(y)>::max(),
                     &terrains.at(TerrainType::MapEdge))
                 );
             } else {
@@ -158,7 +158,7 @@ void TileMap::print() {
 
 unsigned TileMap::manhattan_distance(const Tile &start, const Tile &end) const {
     return std::max(end.x, start.x) - std::min(end.x, start.x) + 
-           std::max(end.y, start.y) - std::min(end.y, start.y);
+        std::max(end.y, start.y) - std::min(end.y, start.y);
 }
 
 unsigned TileMap::chebyshev_distance(const Tile &start, const Tile &end) const {
@@ -190,8 +190,8 @@ std::vector<Tile *> TileMap::get_path(
 
     while(!open_set.empty()) {
         Tile &current = **std::min_element(open_set.begin(), open_set.end(), [f_cost](Tile *a, Tile *b) {
-            const uint64_t a_cost = get_with_default(f_cost, a, static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()));
-            const uint64_t b_cost = get_with_default(f_cost, b, static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()));
+            const uint64_t a_cost = get_with_default(f_cost, a, std::numeric_limits<uint64_t>::max());
+            const uint64_t b_cost = get_with_default(f_cost, b, std::numeric_limits<uint64_t>::max());
             return a_cost < b_cost;
         });
 
@@ -223,8 +223,8 @@ std::vector<Tile *> TileMap::get_path(
                 open_set.insert(&neighbour);
             }
 
-            const uint64_t tmp_g_cost = 1 + get_with_default(g_cost, &current, static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()));
-            const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()));
+            const uint64_t tmp_g_cost = 1 + get_with_default(g_cost, &current, std::numeric_limits<uint64_t>::max());
+            const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, std::numeric_limits<uint64_t>::max());
 
             if(tmp_g_cost >= neighbour_g_cost) {
                 continue;

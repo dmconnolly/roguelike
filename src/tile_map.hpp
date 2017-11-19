@@ -71,10 +71,10 @@ public:
     void print();
 
 private:
+    unsigned id;
     unsigned width;
     unsigned height;
     unsigned tile_count;
-    unsigned id;
     std::map<const Direction, const long> tile_direction_offset;
     static const std::map<const TerrainType, const Terrain> terrains;
 
