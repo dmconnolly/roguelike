@@ -21,7 +21,9 @@ public:
     void step();
 
 private:
-    TileMap tile_map;
+    TileMap *current_map = nullptr;
+    TileMap *last_map = nullptr;
+    unsigned map_id = 0;
 };
 
 #endif /* GAME_HPP */

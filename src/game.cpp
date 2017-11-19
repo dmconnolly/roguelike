@@ -5,13 +5,13 @@ Game::Game() {
 }
 
 void Game::start() {
-    tile_map.generate(20, 10);
-    tile_map.print();
+    current_map = new TileMap(map_id++, 20, 10);
+    current_map->print();
 
-    Tile &start = tile_map.get(1, 1);
-    Tile &end = tile_map.get(12, 8);
+    Tile &start = current_map->get(1, 1);
+    Tile &end = current_map->get(12, 8);
 
-    std::vector<Tile *> path = tile_map.get_path(start, end, [](const Tile &tile) {
+    std::vector<Tile *> path = current_map->get_path(start, end, [](const Tile &tile) {
         return !tile.terrain->map_edge;
     }, false);
 
@@ -19,7 +19,7 @@ void Game::start() {
         tile_ptr->terrain = TileMap::get(TileMap::TerrainType::MapEdge);
     }
 
-    tile_map.print();
+    current_map->print();
 }
 
 void Game::step() {

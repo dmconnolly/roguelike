@@ -3,8 +3,6 @@
 #include <limits>
 #include <functional>
 #include <unordered_set>
-#include <queue>
-#include <deque>
 #include <cstdint>
 #include <algorithm>
 
@@ -67,13 +65,22 @@ const std::vector<TileMap::Direction> TileMap::cardinal_directions = {
     TileMap::Direction::South, TileMap::Direction::West
 };
 
-void TileMap::init(const unsigned map_width, const unsigned map_height) {
-    this->width = width;
-    this->height = height;
-    tile_count = width * height;
+TileMap::TileMap(const unsigned id) {
+    load();
+    init_direction_offsets();
+}
 
+TileMap::TileMap(const unsigned id, const unsigned width, const unsigned height) :
+    width(width),
+    height(height),
+    tile_count(width * height),
+    id(id)
+{
+    init_direction_offsets();
     init_tiles();
+}
 
+void TileMap::init_direction_offsets() {
     const long width_signed = static_cast<long>(width + 2);
     tile_direction_offset.clear();
     tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
@@ -86,13 +93,21 @@ void TileMap::init(const unsigned map_width, const unsigned map_height) {
     tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
 }
 
+TileMap::~TileMap() {
+    save();
+}
+
 void TileMap::init_tiles() {
     tiles.clear();
     tiles.reserve(tile_count + ((width + 1) * 2) + ((height + 1) * 2));
     for(unsigned y=0; y<height+2; ++y) {
         for(unsigned x=0; x<width+2; ++x) {
             if(x==0 || x==width+1 || y==0 || y==height+1) {
-                tiles.push_back(Tile(-1, -1, &terrains.at(TerrainType::MapEdge)));
+                tiles.push_back(Tile(
+                    static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()),
+                    static_cast<uint64_t>(std::numeric_limits<uint64_t>::max()),
+                    &terrains.at(TerrainType::MapEdge))
+                );
             } else {
                 tiles.push_back(Tile(x-1, y-1, &terrains.at(TerrainType::StoneFloor)));
             }
@@ -116,8 +131,8 @@ const Terrain * const TileMap::get(const TerrainType terrain) {
     return &terrains.at(terrain);
 }
 
-void TileMap::generate(const unsigned width, const unsigned height) {
-    init(width, height);
+void TileMap::generate() {
+    init_tiles();
 }
 
 void TileMap::save() {

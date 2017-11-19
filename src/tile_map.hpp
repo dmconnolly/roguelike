@@ -4,6 +4,9 @@
 
 #include <map>
 #include <vector>
+#include <random>
+
+#include "pcg_random.hpp"
 
 #include "tile.hpp"
 #include "terrain.hpp"
@@ -25,10 +28,11 @@ public:
     };
 
     /* Constructor */
-    TileMap() = default;
+    TileMap(const unsigned id);
+    TileMap(const unsigned id, const unsigned width, const unsigned height);
 
     /* Destructor */
-    ~TileMap() = default;
+    ~TileMap();
 
     /* Delete copy constructors */
     TileMap(const TileMap &rhs) = delete;
@@ -49,7 +53,7 @@ public:
     static const Terrain * const get(const TerrainType terrain);
 
     /* Generate a new tilemap */
-    void generate(const unsigned width, const unsigned height);
+    void generate();
 
     /* Save the tilemap to file */
     void save();
@@ -70,12 +74,13 @@ private:
     unsigned width;
     unsigned height;
     unsigned tile_count;
+    unsigned id;
     std::map<const Direction, const long> tile_direction_offset;
     static const std::map<const TerrainType, const Terrain> terrains;
 
     std::vector<Tile> tiles;
 
-    void init(const unsigned width, const unsigned height);
+    void init_direction_offsets();
     void init_tiles();
     unsigned manhattan_distance(const Tile &start, const Tile &end) const;
     unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
