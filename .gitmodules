@@ -1,6 +1,12 @@
 [submodule "glbinding"]
     path = glbinding
     url = https://github.com/cginternals/glbinding.git
+[submodule "glm"]
+    path = glm
+    url = https://github.com/g-truc/glm.git
 [submodule "glfw"]
     path = glfw
     url = https://github.com/glfw/glfw.git
+[submodule "pcg"]
+    path = pcg
+    url = https://github.com/imneme/pcg-cpp.git

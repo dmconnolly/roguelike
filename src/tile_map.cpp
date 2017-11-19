@@ -23,22 +23,22 @@ constexpr static const Terrain create_terrain(const TileMap::TerrainType type) {
     bool map_edge = false;
 
     switch(type) {
-    case TileMap::TerrainType::MapEdge:
-        pathable = false;
-        pathable_flying = false;
-        ascii_char = 'x';
-        map_edge = true;
-        break;
-    case TileMap::TerrainType::StoneWall:
-        pathable = false;
-        pathable_flying = false;
-        ascii_char = '+';
-        break;
-    case TileMap::TerrainType::StoneFloor:
-        pathable = true;
-        pathable_flying = true;
-        ascii_char = '.';
-        break;
+        case TileMap::TerrainType::MapEdge:
+            pathable = false;
+            pathable_flying = false;
+            ascii_char = 'x';
+            map_edge = true;
+            break;
+        case TileMap::TerrainType::StoneWall:
+            pathable = false;
+            pathable_flying = false;
+            ascii_char = '+';
+            break;
+        case TileMap::TerrainType::StoneFloor:
+            pathable = true;
+            pathable_flying = true;
+            ascii_char = '.';
+            break;
     };
 
     return Terrain(
@@ -67,7 +67,7 @@ const std::vector<TileMap::Direction> TileMap::cardinal_directions = {
     TileMap::Direction::South, TileMap::Direction::West
 };
 
-void TileMap::init(const unsigned width, const unsigned height) {
+void TileMap::init(const unsigned map_width, const unsigned map_height) {
     this->width = width;
     this->height = height;
     tile_count = width * height;
