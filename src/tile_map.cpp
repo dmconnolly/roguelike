@@ -2,6 +2,7 @@
 #include <iostream>
 #include <limits>
 #include <functional>
+#include <set>
 #include <unordered_set>
 #include <cstdint>
 #include <algorithm>
@@ -179,8 +180,16 @@ std::vector<Tile *> TileMap::get_path(
     std::map<Tile *, uint64_t> g_cost;
     std::map<Tile *, uint64_t> f_cost;
 
+    const auto f_cost_comp = [&f_cost](Tile *a, Tile *b) {
+        const uint64_t a_cost = get_with_default(f_cost, a, std::numeric_limits<uint64_t>::max());
+        const uint64_t b_cost = get_with_default(f_cost, b, std::numeric_limits<uint64_t>::max());
+        return a_cost < b_cost;
+    };
+
     std::unordered_set<Tile *> closed_set;
-    std::unordered_set<Tile *> open_set = { &start };
+    // std::set seems to be measurably faster than std::unordered_set here
+    // more profiling required
+    std::set<Tile *> open_set = { &start };
     std::map<Tile *, Tile *> parent;
 
     g_cost[&start] = 0;
@@ -189,11 +198,7 @@ std::vector<Tile *> TileMap::get_path(
         manhattan_distance(start, end);
 
     while(!open_set.empty()) {
-        Tile &current = **std::min_element(open_set.begin(), open_set.end(), [f_cost](Tile *a, Tile *b) {
-            const uint64_t a_cost = get_with_default(f_cost, a, std::numeric_limits<uint64_t>::max());
-            const uint64_t b_cost = get_with_default(f_cost, b, std::numeric_limits<uint64_t>::max());
-            return a_cost < b_cost;
-        });
+        Tile &current = **std::min_element(open_set.begin(), open_set.end(), f_cost_comp);
 
         if(&current == &end) {
             std::vector<Tile *> path;
@@ -219,9 +224,7 @@ std::vector<Tile *> TileMap::get_path(
                 continue;
             }
 
-            if(open_set.find(&neighbour) == open_set.end()) {
-                open_set.insert(&neighbour);
-            }
+            open_set.insert(&neighbour);
 
             const uint64_t tmp_g_cost = 1 + get_with_default(g_cost, &current, std::numeric_limits<uint64_t>::max());
             const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, std::numeric_limits<uint64_t>::max());
