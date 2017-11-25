@@ -2,34 +2,15 @@
 #ifndef TILE_MAP_HPP
 #define TILE_MAP_HPP
 
-#include <map>
-#include <vector>
-#include <random>
-
-#include "pcg_random.hpp"
-
-#include "tile.hpp"
+#include "tile_map_base.hpp"
+#include "direction.hpp"
 #include "terrain.hpp"
+#include "tile.hpp"
 
-class TileMap {
+class TileMap : TileMapBase {
 public:
-    /* Static data */
-    enum class Direction : unsigned char {
-        North, NorthEast,
-        East, SouthEast,
-        South, SouthWest,
-        West, NorthWest
-    };
-    static const std::vector<Direction> directions;
-    static const std::vector<Direction> cardinal_directions;
-
-    enum class TerrainType : unsigned char {
-        MapEdge, StoneWall, StoneFloor
-    };
-
     /* Constructor */
-    TileMap(const unsigned id);
-    TileMap(const unsigned id, const unsigned width, const unsigned height);
+    TileMap(const unsigned width, const unsigned height);
 
     /* Destructor */
     ~TileMap();
@@ -43,23 +24,11 @@ public:
     TileMap& operator=(TileMap &&rhs) = delete;
 
     /* Get tile by index */
-    Tile& get(const unsigned x, const unsigned y);
+    Tile& get(const unsigned x, const unsigned y) const;
 
     /* Get tile in direction from another tile */
     Tile& get(Tile &tile, const Direction direction) const;
     const Tile& get(const Tile &tile, const Direction direction) const;
-
-    /* Get terrain pointer */
-    static const Terrain * const get(const TerrainType terrain);
-
-    /* Generate a new tilemap */
-    void generate();
-
-    /* Save the tilemap to file */
-    void save();
-
-    /* Load the tilemap from file */
-    void load();
 
     /* Returns a path between start and end */
     std::vector<Tile *> get_path(
@@ -68,17 +37,18 @@ public:
         const bool diagonal_movement=false
     ) const;
 
-    void print();
+    void generate();
+    void save();
+    void load();
+    void print() const;
 
 private:
     unsigned id;
     unsigned width;
     unsigned height;
     unsigned tile_count;
-    std::map<const Direction, const long> tile_direction_offset;
-    static const std::map<const TerrainType, const Terrain> terrains;
-
-    std::vector<Tile> tiles;
+    std::vector<Tile> *tiles;
+    std::map<const Direction, const long> *tile_direction_offsets;
 
     void init_direction_offsets();
     void init_tiles();

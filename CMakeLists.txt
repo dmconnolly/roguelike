@@ -26,8 +26,10 @@ add_executable(${PROJECT_NAME}
     src/renderer.cpp
     src/game_controller.cpp
     src/game.cpp
-    src/tile_map.cpp
+    src/terrain.cpp
     src/tile.cpp
+    src/tile_map_base.cpp
+    src/tile_map.cpp
 )
 
 # GLFW

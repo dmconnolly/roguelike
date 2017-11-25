@@ -22,7 +22,7 @@ public:
 
 private:
     TileMap *current_map = nullptr;
-    TileMap *last_map = nullptr;
+    TileMap *previous_map = nullptr;
     unsigned map_id = 0;
 };
 

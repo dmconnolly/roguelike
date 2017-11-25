@@ -5,7 +5,7 @@ Game::Game() {
 }
 
 void Game::start() {
-    current_map = new TileMap(map_id++, 20, 10);
+    current_map = new TileMap(20, 10);
     current_map->print();
 
     Tile &start = current_map->get(1, 1);
@@ -16,7 +16,7 @@ void Game::start() {
     }, false);
 
     for(auto tile_ptr : path) {
-        tile_ptr->terrain = TileMap::get(TileMap::TerrainType::MapEdge);
+        tile_ptr->terrain = Terrain::get(Terrain::Type::MapEdge);
     }
 
     current_map->print();

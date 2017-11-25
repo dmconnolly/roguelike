@@ -1,3 +1,5 @@
+#include "tile_map.hpp"
+
 #include <sstream>
 #include <iostream>
 #include <limits>
@@ -15,67 +17,13 @@ V get_with_default(const C<K, V, Args...> &m, K const &key, const V &default_val
     return it == m.end() ? default_val : it->second;
 }
 
-constexpr static const Terrain create_terrain(const TileMap::TerrainType type) {
-    bool pathable = false;
-    bool pathable_flying = false;
-    char ascii_char = '?';
-    bool map_edge = false;
-
-    switch(type) {
-        case TileMap::TerrainType::MapEdge:
-            pathable = false;
-            pathable_flying = false;
-            ascii_char = 'x';
-            map_edge = true;
-            break;
-        case TileMap::TerrainType::StoneWall:
-            pathable = false;
-            pathable_flying = false;
-            ascii_char = '+';
-            break;
-        case TileMap::TerrainType::StoneFloor:
-            pathable = true;
-            pathable_flying = true;
-            ascii_char = '.';
-            break;
-    };
-
-    return Terrain(
-        pathable,
-        pathable_flying,
-        ascii_char,
-        map_edge
-    );
-}
-
-const std::map<const TileMap::TerrainType, const Terrain> TileMap::terrains = {
-    { TerrainType::MapEdge, create_terrain(TerrainType::MapEdge) },
-    { TerrainType::StoneWall, create_terrain(TerrainType::StoneWall) },
-    { TerrainType::StoneFloor, create_terrain(TerrainType::StoneFloor) }
-};
-
-const std::vector<TileMap::Direction> TileMap::directions = {
-    Direction::North, Direction::NorthEast,
-    Direction::East, Direction::SouthEast,
-    Direction::South, Direction::SouthWest,
-    Direction::West, Direction::NorthWest
-};
-
-const std::vector<TileMap::Direction> TileMap::cardinal_directions = {
-    TileMap::Direction::North, TileMap::Direction::East,
-    TileMap::Direction::South, TileMap::Direction::West
-};
-
-TileMap::TileMap(const unsigned id) {
-    load();
-    init_direction_offsets();
-}
-
-TileMap::TileMap(const unsigned id, const unsigned width, const unsigned height) :
+TileMap::TileMap(const unsigned width, const unsigned height) :
+    id(map_count++),
     width(width),
     height(height),
     tile_count(width * height),
-    id(id)
+    tiles(new std::vector<Tile>),
+    tile_direction_offsets(new std::map<const Direction, const long>)
 {
     init_direction_offsets();
     init_tiles();
@@ -83,53 +31,49 @@ TileMap::TileMap(const unsigned id, const unsigned width, const unsigned height)
 
 void TileMap::init_direction_offsets() {
     const long width_signed = static_cast<long>(width + 2);
-    tile_direction_offset.clear();
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::NorthEast, -width_signed + 1));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::East, 1));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::SouthEast, width_signed + 1));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::South, width_signed));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::SouthWest, width_signed - 1));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::West, -1));
-    tile_direction_offset.insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
+    tile_direction_offsets->clear();
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::NorthEast, -width_signed + 1));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::East, 1));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::SouthEast, width_signed + 1));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::South, width_signed));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::SouthWest, width_signed - 1));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::West, -1));
+    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
 }
 
 TileMap::~TileMap() {
-    save();
+    /* Empty */
 }
 
 void TileMap::init_tiles() {
-    tiles.clear();
-    tiles.reserve(tile_count + ((width + 1) * 2) + ((height + 1) * 2));
+    tiles->clear();
+    tiles->reserve(tile_count + ((width + 1) * 2) + ((height + 1) * 2));
     for(unsigned y=0; y<height+2; ++y) {
         for(unsigned x=0; x<width+2; ++x) {
             if(x==0 || x==width+1 || y==0 || y==height+1) {
-                tiles.push_back(Tile(
+                tiles->push_back(Tile(
                     std::numeric_limits<decltype(x)>::max(),
                     std::numeric_limits<decltype(y)>::max(),
-                    &terrains.at(TerrainType::MapEdge))
+                    Terrain::get(Terrain::Type::MapEdge))
                 );
             } else {
-                tiles.push_back(Tile(x-1, y-1, &terrains.at(TerrainType::StoneFloor)));
+                tiles->push_back(Tile(x-1, y-1, Terrain::get(Terrain::Type::StoneFloor)));
             }
         }
     }
 }
 
-Tile& TileMap::get(const unsigned x, const unsigned y) {
-    return tiles[((width+2) * (1+y)) + (1+x)];
+Tile& TileMap::get(const unsigned x, const unsigned y) const {
+    return (*tiles)[((width+2) * (1+y)) + (1+x)];
 }
 
 Tile& TileMap::get(Tile &tile, const Direction direction) const {
-    return *(&tile + tile_direction_offset.at(direction));
+    return *(&tile + tile_direction_offsets->at(direction));
 }
 
 const Tile& TileMap::get(const Tile &tile, const Direction direction) const {
-    return *(&tile + tile_direction_offset.at(direction));
-}
-
-const Terrain * const TileMap::get(const TerrainType terrain) {
-    return &terrains.at(terrain);
+    return *(&tile + tile_direction_offsets->at(direction));
 }
 
 void TileMap::generate() {
@@ -144,7 +88,7 @@ void TileMap::load() {
     /* TODO */
 }
 
-void TileMap::print() {
+void TileMap::print() const {
     std::stringstream ss;
 
     for(unsigned y=0; y<height; ++y) {
@@ -174,7 +118,7 @@ std::vector<Tile *> TileMap::get_path(
     bool(*tile_pathable)(const Tile &),
     const bool diagonal_movement) const
 {
-    const std::vector<TileMap::Direction> &neighbour_directions =
+    const std::vector<Direction> &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;
 
     std::map<Tile *, uint64_t> g_cost;
