@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
     src/tile.cpp
     src/tile_map_base.cpp
     src/tile_map.cpp
+    src/feature.cpp
+    src/map_generator.cpp
 )
 
 # GLFW

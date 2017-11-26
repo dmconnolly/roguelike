@@ -67,3 +67,21 @@ CMakeSettings.json
 # Sublime text project files
 .sublime-project
 .sublime-workspace
+
+# glbinding things
+glbinding/source/tests
+glbinding/source/examples
+glbinding/docs
+
+# glfw things
+glfw/docs
+glfw/examples
+glfw/tests
+
+# glm things
+glm/doc
+glm/test
+
+# pcg things
+pcg/test-high
+pcg/sample

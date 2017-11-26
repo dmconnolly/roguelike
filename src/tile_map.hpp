@@ -9,6 +9,16 @@
 
 class TileMap : TileMapBase {
 public:
+    struct Data {
+        unsigned width;
+        unsigned height;
+        unsigned tile_count;
+        std::vector<Tile> tiles;
+        std::map<const Direction, const long> tile_direction_offsets;
+    };
+
+    TileMap::Data *data;
+
     /* Constructor */
     TileMap(const unsigned width, const unsigned height);
 
@@ -37,21 +47,14 @@ public:
         const bool diagonal_movement=false
     ) const;
 
-    void generate();
     void save();
     void load();
     void print() const;
 
 private:
-    unsigned id;
-    unsigned width;
-    unsigned height;
-    unsigned tile_count;
-    std::vector<Tile> *tiles;
-    std::map<const Direction, const long> *tile_direction_offsets;
+    const unsigned id;
 
     void init_direction_offsets();
-    void init_tiles();
     unsigned manhattan_distance(const Tile &start, const Tile &end) const;
     unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
 };

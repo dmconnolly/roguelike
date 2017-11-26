@@ -18,81 +18,59 @@ V get_with_default(const C<K, V, Args...> &m, K const &key, const V &default_val
 }
 
 TileMap::TileMap(const unsigned width, const unsigned height) :
-    id(map_count++),
-    width(width),
-    height(height),
-    tile_count(width * height),
-    tiles(new std::vector<Tile>),
-    tile_direction_offsets(new std::map<const Direction, const long>)
+    id(map_count++)
 {
+    data = new TileMap::Data;
+    data->width = width;
+    data->height = height;
+    data->tile_count = width * height;
+
     init_direction_offsets();
-    init_tiles();
 }
 
 void TileMap::init_direction_offsets() {
-    const long width_signed = static_cast<long>(width + 2);
-    tile_direction_offsets->clear();
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::NorthEast, -width_signed + 1));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::East, 1));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::SouthEast, width_signed + 1));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::South, width_signed));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::SouthWest, width_signed - 1));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::West, -1));
-    tile_direction_offsets->insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
+    const long width_signed = static_cast<long>(data->width + 2);
+    data->tile_direction_offsets.clear();
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::NorthEast, -width_signed + 1));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::East, 1));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::SouthEast, width_signed + 1));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::South, width_signed));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::SouthWest, width_signed - 1));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::West, -1));
+    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
 }
 
 TileMap::~TileMap() {
     /* Empty */
 }
 
-void TileMap::init_tiles() {
-    tiles->clear();
-    tiles->reserve(tile_count + ((width + 1) * 2) + ((height + 1) * 2));
-    for(unsigned y=0; y<height+2; ++y) {
-        for(unsigned x=0; x<width+2; ++x) {
-            if(x==0 || x==width+1 || y==0 || y==height+1) {
-                tiles->push_back(Tile(
-                    std::numeric_limits<decltype(x)>::max(),
-                    std::numeric_limits<decltype(y)>::max(),
-                    Terrain::get(Terrain::Type::MapEdge))
-                );
-            } else {
-                tiles->push_back(Tile(x-1, y-1, Terrain::get(Terrain::Type::StoneFloor)));
-            }
-        }
-    }
-}
-
 Tile& TileMap::get(const unsigned x, const unsigned y) const {
-    return (*tiles)[((width+2) * (1+y)) + (1+x)];
+    return data->tiles[((data->width+2) * (1+y)) + (1+x)];
 }
 
 Tile& TileMap::get(Tile &tile, const Direction direction) const {
-    return *(&tile + tile_direction_offsets->at(direction));
+    return *(&tile + data->tile_direction_offsets.at(direction));
 }
 
 const Tile& TileMap::get(const Tile &tile, const Direction direction) const {
-    return *(&tile + tile_direction_offsets->at(direction));
-}
-
-void TileMap::generate() {
-    init_tiles();
+    return *(&tile + data->tile_direction_offsets.at(direction));
 }
 
 void TileMap::save() {
-    /* TODO */
+    /* TODO - save to file*/
+    delete data;
 }
 
 void TileMap::load() {
-    /* TODO */
+    /* TODO - load from file */
 }
 
 void TileMap::print() const {
     std::stringstream ss;
 
-    for(unsigned y=0; y<height; ++y) {
-        for(unsigned x=0; x<width; ++x) {
+    for(unsigned y=0; y<data->height; ++y) {
+        for(unsigned x=0; x<data->width; ++x) {
             ss << get(x, y).terrain->ascii_char;
         }
         ss << '\n';
