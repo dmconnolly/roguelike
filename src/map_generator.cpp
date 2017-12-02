@@ -28,17 +28,17 @@ void MapGenerator::init_map(TileMap &map) {
 }
 
 void MapGenerator::add_start_room(TileMap &map) {
-
+    /* TODO */
 }
 
 void MapGenerator::add_features(TileMap &map) {
-
+    /* TODO */
 }
 
 void MapGenerator::correction_pass(TileMap &map) {
-
+    /* TODO */
 }
 
 void MapGenerator::add_exit_stairs(TileMap &map) {
-
+    /* TODO */
 }
