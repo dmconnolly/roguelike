@@ -21,6 +21,8 @@ add_library(roguelike_src_lib
     feature.cpp
     map_generator.hpp
     map_generator.cpp
+    random.hpp
+    random.cpp
 )
 
 include_directories(
@@ -35,16 +37,5 @@ target_link_libraries(roguelike_src_lib PUBLIC
     glfw
 )
 
-add_executable(Roguelike main.cpp)
-target_link_libraries(Roguelike roguelike_src_lib)
-
-set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/build)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OUTPUT_DIR})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OUTPUT_DIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OUTPUT_DIR})
-endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+add_executable(roguelike main.cpp)
+target_link_libraries(roguelike roguelike_src_lib)
