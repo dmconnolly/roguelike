@@ -14,7 +14,9 @@ public:
     enum class Type : unsigned char {
         MapEdge,
         StoneWall,
-        StoneFloor
+        StoneFloor,
+        StairsUp,
+        StairsDown
     };
 
     Terrain(const Terrain::Type type) {
@@ -39,6 +41,16 @@ public:
                 pathable = true;
                 pathable_flying = true;
                 ascii_char = '.';
+                break;
+            case Terrain::Type::StairsUp:
+                pathable = true;
+                pathable_flying = true;
+                ascii_char = '<';
+                break;
+            case Terrain::Type::StairsDown:
+                pathable = true;
+                pathable_flying = true;
+                ascii_char = '>';
                 break;
         };
     }

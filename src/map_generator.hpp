@@ -23,7 +23,7 @@ public:
     static void build(TileMap &map);
 
 private:
-    const static unsigned min_room_width = 4;
+    const static unsigned min_room_width = 5;
     const static unsigned max_room_width = 8;
 
     const static unsigned feature_goal = 20;

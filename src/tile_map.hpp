@@ -13,6 +13,8 @@ public:
         unsigned width;
         unsigned height;
         unsigned tile_count;
+        Tile *entrance;
+        Tile *exit;
         std::vector<Tile> tiles;
         std::map<const Direction, const long> tile_direction_offsets;
     };

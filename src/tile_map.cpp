@@ -11,7 +11,7 @@
 
 #include "tile_map.hpp"
 
-template <template<class, class, class...> class C, typename K, typename V, typename... Args>
+template<template<typename, typename, typename...> typename C, typename K, typename V, typename... Args>
 V get_with_default(const C<K, V, Args...> &m, K const &key, const V &default_val) {
     typename C<K, V, Args...>::const_iterator it = m.find(key);
     return it == m.end() ? default_val : it->second;
