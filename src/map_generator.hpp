@@ -3,14 +3,15 @@
 #define MAP_GENERATOR_HPP
 
 #include "tile_map.hpp"
+#include "feature.hpp"
 
 class MapGenerator {
 public:
-    /* Delete constructor */
-    MapGenerator() = delete;
+    /* Constructor */
+    MapGenerator(TileMap &map);
 
-    /* Delete destructor */
-    ~MapGenerator() = delete;
+    /* Default destructor */
+    ~MapGenerator() = default;
 
     /* Delete copy constructors */
     MapGenerator(const MapGenerator &rhs) = delete;
@@ -20,7 +21,7 @@ public:
     MapGenerator& operator=(const MapGenerator &rhs) = delete;
     MapGenerator& operator=(MapGenerator &&rhs) = delete;
 
-    static void build(TileMap &map);
+    void build();
 
 private:
     const static unsigned min_room_width = 5;
@@ -37,11 +38,15 @@ private:
 
     const static unsigned min_entrance_exit_distance = 15;
 
-    static void init_map(TileMap &map);
-    static void add_start_room(TileMap &map);
-    static void add_features(TileMap &map);
-    static void correction_pass(TileMap &map);
-    static void add_exit_stairs(TileMap &map);
+    TileMap &map;
+    std::vector<Feature> features;
+    std::map<Tile *, Feature *> tile_features;
+
+    void init_map();
+    void add_start_room();
+    void add_features();
+    void correction_pass();
+    void add_exit_stairs();
 };
 
 #endif /* MAP_GENERATOR_HPP */

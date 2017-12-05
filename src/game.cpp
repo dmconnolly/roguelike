@@ -7,7 +7,8 @@ Game::Game() {
 
 void Game::start() {
     current_map = new TileMap(100, 50);
-    MapGenerator::build(*current_map);
+    MapGenerator map_gen(*current_map);
+    map_gen.build();
     current_map->print();
 
     //Tile &start = current_map->get(1, 1);

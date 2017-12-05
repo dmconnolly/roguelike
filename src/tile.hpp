@@ -8,10 +8,10 @@
 
 class Tile {
 public:
-    const bool discovered;
     const unsigned x;
     const unsigned y;
     const Terrain *terrain;
+    bool discovered;
 
     /* Constructors */
     Tile(const unsigned x, const unsigned y, const Terrain *terrain=nullptr);

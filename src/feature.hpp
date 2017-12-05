@@ -2,31 +2,42 @@
 #ifndef FEATURE_HPP
 #define FEATURE_HPP
 
-#include <unordered_set>
+#include <vector>
 
 #include "tile.hpp"
 
 class Feature {
 public:
-    /* Constructor */
-    Feature() = default;
+    enum class Type : unsigned char {
+        EntranceRoom,
+        ExitRoom,
+        Room,
+        Corridor,
+        None
+    };
 
-    /* Destructor */
+    std::vector<Tile *> tiles;
+    std::vector<Tile *> centre_tiles;
+    std::vector<Tile *> edge_tiles;
+    std::vector<Tile *> entrance_tiles;
+
+    /* Constructor */
+    Feature::Feature(const Feature::Type type=Feature::Type::None);
+
+    /* Default destructor */
     ~Feature() = default;
 
-    /* Delete copy constructors */
+    /* Delete copy constructor */
     Feature(const Feature &rhs) = delete;
-    Feature(Feature &&rhs) = delete;
+    /* Allow move though */
+    Feature(Feature &&rhs) = default;
 
     /* Delete assignment operators */
     Feature& operator=(const Feature &rhs) = delete;
     Feature& operator=(Feature &&rhs) = delete;
 
 private:
-    std::unordered_set<Tile *> tiles;
-    std::unordered_set<Tile *> centre_tiles;
-    std::unordered_set<Tile *> edge_tiles;
-    std::unordered_set<Tile *> entrance_tiles;
+    Feature::Type type;
 };
 
 #endif /* FEATURE_HPP */

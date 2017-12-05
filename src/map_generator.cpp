@@ -1,19 +1,32 @@
 #include <cstdint>
 #include <array>
+#include <map>
 
 #include "map_generator.hpp"
 #include "random.hpp"
 #include "terrain.hpp"
 
-void MapGenerator::build(TileMap &map) {
-    init_map(map);
-    add_start_room(map);
-    add_features(map);
-    correction_pass(map);
-    add_exit_stairs(map);
+MapGenerator::MapGenerator(TileMap &map) :
+    map(map),
+    features(feature_goal),
+    tile_features()
+{
+    init_map();
+    add_start_room();
+    add_features();
+    correction_pass();
+    add_exit_stairs();
 }
 
-void MapGenerator::init_map(TileMap &map) {
+void MapGenerator::build() {
+    init_map();
+    add_start_room();
+    add_features();
+    correction_pass();
+    add_exit_stairs();
+}
+
+void MapGenerator::init_map() {
     map.data->tiles.clear();
     map.data->tiles.reserve(map.data->tile_count + ((map.data->width + 1) * 2) + ((map.data->height + 1) * 2));
     for(unsigned y=0; y<map.data->height+2; ++y) {
@@ -31,7 +44,7 @@ void MapGenerator::init_map(TileMap &map) {
     }
 }
 
-void MapGenerator::add_start_room(TileMap &map) {
+void MapGenerator::add_start_room() {
     const std::vector<unsigned> start_room_size = Random::between(
         min_room_width, max_room_width, 2
     );
@@ -62,13 +75,29 @@ void MapGenerator::add_start_room(TileMap &map) {
         entrance_pos[1] + (half_start_room_size[1] + start_room_size[1] % 2)
     };
 
+    features.push_back(Feature(Feature::Type::EntranceRoom));
+    Feature &feature = features.back();
+
     for(unsigned y=start_pos[1]; y<=end_pos[1]; ++y) {
         for(unsigned x=start_pos[0]; x<=end_pos[0]; ++x) {
             Tile &tile = map.get(x, y);
+            tile_features[&tile] = &feature;
+            feature.tiles.push_back(&tile);
+
             if(x==start_pos[0] || x==end_pos[0] || y==start_pos[1] || y==end_pos[1]) {
                 tile.terrain = Terrain::get(Terrain::Type::StoneWall);
+                feature.edge_tiles.push_back(&tile);
+
+                if((x != start_pos[0] || y != start_pos[1]) && 
+                   (x != end_pos[0]   || y != end_pos[1]) &&
+                   (x != start_pos[0] || y != end_pos[1]) &&
+                   (x != end_pos[0]   || y != start_pos[1]))
+                {
+                    feature.entrance_tiles.push_back(&tile);
+                }
             } else {
                 tile.terrain = Terrain::get(Terrain::Type::StoneFloor);
+                feature.centre_tiles.push_back(&tile);
             }
         }
     }
@@ -76,14 +105,14 @@ void MapGenerator::add_start_room(TileMap &map) {
     map.data->entrance = &map.get(entrance_pos[0], entrance_pos[1]);
 }
 
-void MapGenerator::add_features(TileMap &map) {
+void MapGenerator::add_features() {
     /* TODO */
 }
 
-void MapGenerator::correction_pass(TileMap &map) {
+void MapGenerator::correction_pass() {
     /* TODO */
 }
 
-void MapGenerator::add_exit_stairs(TileMap &map) {
+void MapGenerator::add_exit_stairs() {
     /* TODO */
 }

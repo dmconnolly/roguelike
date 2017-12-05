@@ -1,10 +1,10 @@
 #include "tile.hpp"
 
 Tile::Tile(const unsigned x, const unsigned y, const Terrain *terrain) :
-    discovered(false),
     x(x),
     y(y),
-    terrain(terrain)
+    terrain(terrain),
+    discovered(false)
 {
     /* Empty */
 }
