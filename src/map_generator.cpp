@@ -11,11 +11,7 @@ MapGenerator::MapGenerator(TileMap &map) :
     features(feature_goal),
     tile_features()
 {
-    init_map();
-    add_start_room();
-    add_features();
-    correction_pass();
-    add_exit_stairs();
+    /* Empty */
 }
 
 void MapGenerator::build() {
