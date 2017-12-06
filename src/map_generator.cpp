@@ -143,6 +143,7 @@ Feature::Type MapGenerator::get_feature_type() const {
 
 bool MapGenerator::add_room_feature(Feature &feature) {
     /* TODO */
+    return true;
 }
 
 void MapGenerator::correction_pass() {
