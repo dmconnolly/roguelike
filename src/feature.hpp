@@ -16,6 +16,7 @@ public:
         None
     };
 
+    Feature::Type type;
     std::vector<Tile *> tiles;
     std::vector<Tile *> centre_tiles;
     std::vector<Tile *> edge_tiles;
@@ -35,9 +36,6 @@ public:
     /* Delete assignment operators */
     Feature& operator=(const Feature &rhs) = delete;
     Feature& operator=(Feature &&rhs) = delete;
-
-private:
-    Feature::Type type;
 };
 
 #endif /* FEATURE_HPP */

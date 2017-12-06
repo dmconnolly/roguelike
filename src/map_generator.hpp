@@ -47,6 +47,11 @@ private:
     void add_features();
     void correction_pass();
     void add_exit_stairs();
+
+    bool MapGenerator::try_add_feature();
+    bool feature_fits(const Feature &feature) const;
+    Feature::Type get_feature_type() const;
+    bool add_room_feature(Feature &feature);
 };
 
 #endif /* MAP_GENERATOR_HPP */

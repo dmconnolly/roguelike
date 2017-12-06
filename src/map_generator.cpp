@@ -106,6 +106,42 @@ void MapGenerator::add_start_room() {
 }
 
 void MapGenerator::add_features() {
+    int max_retries = max_feature_retries_pre_goal;
+    int retries = 0;
+
+    while(retries <= max_retries) {
+        retries += try_add_feature() ? 0 : 1;
+        if(features.size() == feature_goal) {
+            max_retries = max_feature_retries_post_goal;
+        }
+    }
+}
+
+bool MapGenerator::try_add_feature() {
+    Tile &start_wall = *Random::from_vector(Random::from_vector(features).entrance_tiles);
+    Feature feature(get_feature_type());
+
+    switch(feature.type) {
+        case Feature::Type::Room:
+            if(!add_room_feature(feature)) {
+                return false;
+            }
+        default:
+            /* TODO: Special features */
+            return false;
+    }
+}
+
+bool MapGenerator::feature_fits(const Feature &feature) const {
+    /* TODO */
+    return true;
+}
+
+Feature::Type MapGenerator::get_feature_type() const {
+    return Feature::Type::Room;
+}
+
+bool MapGenerator::add_room_feature(Feature &feature) {
     /* TODO */
 }
 

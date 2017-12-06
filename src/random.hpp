@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <type_traits>
+#include <optional>
 
 #include "pcg_random.hpp"
 
@@ -24,6 +25,12 @@ public:
             values[i] = uniform_dist(rng);
         }
         return values;
+    }
+
+    template<typename T>
+    static T& from_vector(std::vector<T> &vec) {
+        assert(vec.size() > 0);
+        return vec[Random::between(static_cast<std::size_t>(0), vec.size())];
     }
 
 private:
