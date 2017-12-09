@@ -31,8 +31,8 @@ private:
     const static unsigned max_feature_retries_pre_goal = 25;
     const static unsigned max_feature_retries_post_goal = 5;
 
-    const static unsigned max_feature_start_tile_select_retries = 5;
     const static unsigned max_new_feature_start_mod = 30;
+
     const static unsigned min_passage_length = 8;
     const static unsigned max_passage_length = 25;
 
@@ -40,7 +40,7 @@ private:
 
     TileMap &map;
     std::vector<Feature> features;
-    std::map<Tile *, Feature *> tile_features;
+    std::map<Tile *, Feature *> assigned_tiles;
 
     void init_map();
     void add_start_room();

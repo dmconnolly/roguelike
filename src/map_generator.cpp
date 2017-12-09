@@ -8,10 +8,10 @@
 
 MapGenerator::MapGenerator(TileMap &map) :
     map(map),
-    features(feature_goal),
-    tile_features()
+    features(),
+    assigned_tiles()
 {
-    /* Empty */
+    features.reserve(feature_goal);
 }
 
 void MapGenerator::build() {
@@ -62,13 +62,13 @@ void MapGenerator::add_start_room() {
     };
 
     const std::array<const unsigned, 2> start_pos = {
-        entrance_pos[0] - (half_start_room_size[0] + start_room_size[0] % 2),
-        entrance_pos[1] - (half_start_room_size[1] + start_room_size[1] % 2)
+        entrance_pos[0] - (half_start_room_size[0] + start_room_size[0] % 2)-1,
+        entrance_pos[1] - (half_start_room_size[1] + start_room_size[1] % 2)-1
     };
 
     const std::array<const unsigned, 2> end_pos = {
-        entrance_pos[0] + (half_start_room_size[0] + start_room_size[0] % 2),
-        entrance_pos[1] + (half_start_room_size[1] + start_room_size[1] % 2)
+        entrance_pos[0] + (half_start_room_size[0] + start_room_size[0] % 2)-1,
+        entrance_pos[1] + (half_start_room_size[1] + start_room_size[1] % 2)-1
     };
 
     features.push_back(Feature(Feature::Type::EntranceRoom));
@@ -77,7 +77,7 @@ void MapGenerator::add_start_room() {
     for(unsigned y=start_pos[1]; y<=end_pos[1]; ++y) {
         for(unsigned x=start_pos[0]; x<=end_pos[0]; ++x) {
             Tile &tile = map.get(x, y);
-            tile_features[&tile] = &feature;
+            assigned_tiles[&tile] = &feature;
             feature.tiles.push_back(&tile);
 
             if(x==start_pos[0] || x==end_pos[0] || y==start_pos[1] || y==end_pos[1]) {
@@ -114,7 +114,6 @@ void MapGenerator::add_features() {
 }
 
 bool MapGenerator::try_add_feature() {
-    Tile &start_wall = *Random::from_vector(Random::from_vector(features).entrance_tiles);
     Feature feature(get_feature_type());
 
     switch(feature.type) {
@@ -126,6 +125,8 @@ bool MapGenerator::try_add_feature() {
             /* TODO: Special features */
             return false;
     }
+
+    features.push_back(std::move(feature));
 }
 
 bool MapGenerator::feature_fits(const Feature &feature) const {
@@ -138,7 +139,83 @@ Feature::Type MapGenerator::get_feature_type() const {
 }
 
 bool MapGenerator::add_room_feature(Feature &feature) {
-    /* TODO */
+    // Existing feature wall to connect to
+    Feature &f = Random::from_vector(features);
+    Tile &start_wall = *Random::from_vector(f.entrance_tiles);
+
+    // Start corner of the room
+    Tile &start_corner = map.get(
+        Random::between(
+            std::max(0, static_cast<int>(start_wall.x-max_new_feature_start_mod)),
+            std::min(static_cast<int>(map.data->width-1), static_cast<int>(start_wall.x+max_new_feature_start_mod))
+        ),
+        Random::between(
+            std::max(0, static_cast<int>(start_wall.y-max_new_feature_start_mod)),
+            std::min(static_cast<int>(map.data->height-1), static_cast<int>(start_wall.y+max_new_feature_start_mod))
+        )
+    );
+
+    // Random room size
+    std::vector<unsigned> size = Random::between(min_room_width, max_room_width, 2);
+
+    // Avoid going out of bounds
+    const unsigned end_corner_x = start_corner.x + ((size[0]-1) * Random::one_of(-1, 1));
+    const unsigned end_corner_y = start_corner.y + ((size[1]-1) * Random::one_of(-1, 1));
+
+    // Out of bounds
+    if(end_corner_x>map.data->width-1 || end_corner_y>map.data->height-1) {
+        return false;
+    }
+
+    // End corner of the room
+    Tile &end_corner = map.get(end_corner_x, end_corner_y);
+
+    // Start and end values for the loop
+    const unsigned min_x = std::min(start_corner.x, end_corner.x);
+    const unsigned max_x = std::max(start_corner.x, end_corner.x);
+    const unsigned min_y = std::min(start_corner.y, end_corner.y);
+    const unsigned max_y = std::max(start_corner.y, end_corner.y);
+
+    // Add all tiles to the feature
+    for(unsigned y=min_y; y<=max_y; ++y) {
+        for(unsigned x=min_x; x<=max_x; ++x) {
+            Tile &tile = map.get(x, y);
+
+            // Return if any tiles are already assigned
+            if(assigned_tiles.count(&tile)) {
+                return false;
+            }
+
+            feature.tiles.push_back(&tile);
+            if(x==start_corner.x || x==end_corner.x || y==start_corner.y || y==end_corner.y) {
+                // Tiles on the edge of the feature (walls)
+                feature.edge_tiles.push_back(&tile);
+
+                // Everything except the corners can be an entrance in future
+                if((x != start_corner.x || y != start_corner.y) && 
+                   (x != end_corner.x   || y != end_corner.y) &&
+                   (x != start_corner.x || y != end_corner.y) &&
+                   (x != end_corner.x   || y != start_corner.y))
+                {
+                    feature.entrance_tiles.push_back(&tile);
+                }
+            } else {
+                // Tiles in the center of the feature (floors)
+                feature.centre_tiles.push_back(&tile);
+            }
+        }
+    }
+
+    // Assign tile properties and assign to feature in map
+    for(auto *tile : feature.edge_tiles) {
+        assigned_tiles[tile] = &feature;
+        tile->terrain = Terrain::get(Terrain::Type::StoneWall);
+    }
+    for(auto *tile : feature.centre_tiles) {
+        assigned_tiles[tile] = &feature;
+        tile->terrain = Terrain::get(Terrain::Type::StoneFloor);
+    }
+
     return true;
 }
 
