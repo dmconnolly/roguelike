@@ -47,7 +47,7 @@ public:
                 pathable = false;
                 pathable_flying = false;
                 ascii_char = '#';
-                path_cost = 12;
+                path_cost = 1200;
                 break;
             case Terrain::Type::StoneFloor:
                 pathable = true;

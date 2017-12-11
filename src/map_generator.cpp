@@ -52,14 +52,17 @@ void MapGenerator::add_hard_stone_walls() {
     FastNoise noise_gen(-1337);
 
     noise_gen.SetNoiseType(FastNoise::Perlin);
-    noise_gen.SetFrequency(0.4);
+    noise_gen.SetFrequency(static_cast<FN_DECIMAL>(0.4));
     noise_gen.SetInterp(FastNoise::Interp::Quintic);
 
     static const Terrain * const hard_stone_wall_ptr = Terrain::get(Terrain::Type::HardStoneWall);
 
     for(unsigned y=0; y<map.data->height; ++y) {
         for(unsigned x=0; x<map.data->width; ++x) {
-            const auto noise_val = noise_gen.GetNoise(x, y);
+            const auto noise_val = noise_gen.GetNoise(
+                static_cast<FN_DECIMAL>(x),
+                static_cast<FN_DECIMAL>(y)
+            );
             if(noise_val > 0.3) {
                 map.get(x, y).terrain = hard_stone_wall_ptr;
             }

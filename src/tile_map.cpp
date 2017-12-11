@@ -5,6 +5,7 @@
 #include <limits>
 #include <functional>
 #include <unordered_set>
+#include <set>
 #include <cstdint>
 #include <algorithm>
 
@@ -105,7 +106,7 @@ std::vector<Tile *> TileMap::get_path(
     bool(*tile_pathable)(const Tile &),
     const bool diagonal_movement) const
 {
-    constexpr static const uint64_t default_cost = std::numeric_limits<uint64_t>::max()/2-1;
+    constexpr static const uint64_t default_cost = std::numeric_limits<uint64_t>::max();
 
     const std::vector<Direction> &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;
@@ -116,11 +117,12 @@ std::vector<Tile *> TileMap::get_path(
     const auto f_cost_comp = [&f_cost](Tile *a, Tile *b) {
         const uint64_t a_cost = get_with_default(f_cost, a, default_cost);
         const uint64_t b_cost = get_with_default(f_cost, b, default_cost);
-        return a_cost < b_cost;
+        return a_cost > b_cost;
     };
 
     std::unordered_set<Tile *> closed_set;
-    std::unordered_set<Tile *> open_set = { &start };
+    std::set<Tile *, decltype(f_cost_comp)> open_set(f_cost_comp);
+    open_set.insert(&start);
     std::unordered_map<Tile *, Tile *> parent;
 
     g_cost[&start] = 0;
@@ -129,7 +131,8 @@ std::vector<Tile *> TileMap::get_path(
         manhattan_distance(start, end);
 
     while(!open_set.empty()) {
-        Tile &current = **std::min_element(open_set.begin(), open_set.end(), f_cost_comp);
+        const auto current_it = --open_set.end();
+        Tile &current = **current_it;
 
         if(&current == &end) {
             std::vector<Tile *> path;
@@ -142,7 +145,7 @@ std::vector<Tile *> TileMap::get_path(
             return path;
         }
 
-        open_set.erase(&current);
+        open_set.erase(current_it);
         closed_set.insert(&current);
 
         for(const auto direction : neighbour_directions) {
@@ -168,7 +171,8 @@ std::vector<Tile *> TileMap::get_path(
             g_cost[&neighbour] = tmp_g_cost;
             f_cost[&neighbour] = tmp_g_cost + (diagonal_movement ?
                 chebyshev_distance(neighbour, end) :
-                manhattan_distance(neighbour, end));
+                manhattan_distance(neighbour, end)
+            );
         }
     }
 

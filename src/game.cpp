@@ -28,7 +28,7 @@ void Game::start() {
         }, false);
 
         std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-        total += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        total += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
     }
 
     for(auto *tile : path) {
