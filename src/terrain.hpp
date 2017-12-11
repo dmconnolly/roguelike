@@ -33,7 +33,7 @@ public:
             case Terrain::Type::MapEdge:
                 pathable = false;
                 pathable_flying = false;
-                ascii_char = 'x';
+                ascii_char = ' ';
                 map_edge = true;
                 path_cost = std::numeric_limits<unsigned>::max();
                 break;
@@ -47,7 +47,7 @@ public:
                 pathable = false;
                 pathable_flying = false;
                 ascii_char = '#';
-                path_cost = 1200;
+                path_cost = 10;
                 break;
             case Terrain::Type::StoneFloor:
                 pathable = true;

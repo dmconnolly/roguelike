@@ -45,11 +45,11 @@ void MapGenerator::init_map() {
 }
 
 void MapGenerator::add_hard_stone_walls() {
-    //FastNoise noise_gen(Random::between(
-    //    std::numeric_limits<int>::min(),
-    //    std::numeric_limits<int>::max()
-    //));
-    FastNoise noise_gen(-1337);
+    FastNoise noise_gen(Random::between(
+        std::numeric_limits<int>::min(),
+        std::numeric_limits<int>::max()
+    ));
+    // FastNoise noise_gen(-1337);
 
     noise_gen.SetNoiseType(FastNoise::Perlin);
     noise_gen.SetFrequency(static_cast<FN_DECIMAL>(0.4));

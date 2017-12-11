@@ -120,10 +120,10 @@ std::vector<Tile *> TileMap::get_path(
         return a_cost > b_cost;
     };
 
+    std::unordered_map<Tile *, Tile *> parent;
     std::unordered_set<Tile *> closed_set;
     std::set<Tile *, decltype(f_cost_comp)> open_set(f_cost_comp);
     open_set.insert(&start);
-    std::unordered_map<Tile *, Tile *> parent;
 
     g_cost[&start] = 0;
     f_cost[&start] = diagonal_movement ?
