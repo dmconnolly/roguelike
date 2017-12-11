@@ -40,7 +40,7 @@ set(OPTION_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/glbinding)
 
 # Source
-add_subdirectory(src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
 # Tests
-add_subdirectory(test)
+add_subdirectory(${CMAKE_SOURCE_DIR}/test)

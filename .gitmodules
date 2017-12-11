@@ -1,3 +1,6 @@
+[submodule "fastnoise"]
+    path = src/fastnoise
+    url = https://github.com/Auburns/FastNoise.git
 [submodule "glbinding"]
     path = glbinding
     url = https://github.com/cginternals/glbinding.git

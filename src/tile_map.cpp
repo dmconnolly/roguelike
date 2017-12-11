@@ -4,7 +4,6 @@
 #include <iostream>
 #include <limits>
 #include <functional>
-#include <set>
 #include <unordered_set>
 #include <cstdint>
 #include <algorithm>
@@ -24,21 +23,6 @@ TileMap::TileMap(const unsigned width, const unsigned height) :
     data->width = width;
     data->height = height;
     data->tile_count = width * height;
-
-    init_direction_offsets();
-}
-
-void TileMap::init_direction_offsets() {
-    const long width_signed = static_cast<long>(data->width + 2);
-    data->tile_direction_offsets.clear();
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::North, -width_signed));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::NorthEast, -width_signed + 1));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::East, 1));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::SouthEast, width_signed + 1));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::South, width_signed));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::SouthWest, width_signed - 1));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::West, -1));
-    data->tile_direction_offsets.insert(std::pair<const Direction, const long>(Direction::NorthWest, -width_signed - 1));
 }
 
 TileMap::~TileMap() {
@@ -50,11 +34,36 @@ Tile& TileMap::get(const unsigned x, const unsigned y) const {
 }
 
 Tile& TileMap::get(Tile &tile, const Direction direction) const {
-    return *(&tile + data->tile_direction_offsets.at(direction));
-}
+    const std::ptrdiff_t width = static_cast<long>(data->width + 2);
+    std::ptrdiff_t offset;
 
-const Tile& TileMap::get(const Tile &tile, const Direction direction) const {
-    return *(&tile + data->tile_direction_offsets.at(direction));
+    switch(direction) {
+        case Direction::North:
+            offset = -width;
+            break;
+        case Direction::NorthEast:
+            offset = -width + 1;
+            break;
+        case Direction::East:
+            offset = 1;
+            break;
+        case Direction::SouthEast:
+            offset = width + 1;
+            break;
+        case Direction::South:
+            offset = width;
+            break;
+        case Direction::SouthWest:
+            offset = width - 1;
+            break;
+        case Direction::West:
+            offset = -1;
+            break;
+        case Direction::NorthWest:
+            offset = -width - 1;
+            break;
+    }
+    return *(&tile + offset);
 }
 
 void TileMap::save() {
@@ -80,14 +89,14 @@ void TileMap::print() const {
 }
 
 unsigned TileMap::manhattan_distance(const Tile &start, const Tile &end) const {
-    return std::max(end.x, start.x) - std::min(end.x, start.x) + 
-        std::max(end.y, start.y) - std::min(end.y, start.y);
+    return std::abs(static_cast<int>(start.x) - static_cast<int>(end.x)) +
+        std::abs(static_cast<int>(start.y) - static_cast<int>(end.y));
 }
 
 unsigned TileMap::chebyshev_distance(const Tile &start, const Tile &end) const {
     return std::max(
-        std::max(end.x, start.x) - std::min(end.x, start.x),
-        std::max(end.y, start.y) - std::min(end.y, start.y)
+        std::abs(static_cast<int>(start.x) - static_cast<int>(end.x)),
+        std::abs(static_cast<int>(start.y) - static_cast<int>(end.y))
     );
 }
 
@@ -96,6 +105,8 @@ std::vector<Tile *> TileMap::get_path(
     bool(*tile_pathable)(const Tile &),
     const bool diagonal_movement) const
 {
+    constexpr static const uint64_t default_cost = std::numeric_limits<uint64_t>::max()/2-1;
+
     const std::vector<Direction> &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;
 
@@ -103,15 +114,13 @@ std::vector<Tile *> TileMap::get_path(
     std::map<Tile *, uint64_t> f_cost;
 
     const auto f_cost_comp = [&f_cost](Tile *a, Tile *b) {
-        const uint64_t a_cost = get_with_default(f_cost, a, std::numeric_limits<uint64_t>::max());
-        const uint64_t b_cost = get_with_default(f_cost, b, std::numeric_limits<uint64_t>::max());
+        const uint64_t a_cost = get_with_default(f_cost, a, default_cost);
+        const uint64_t b_cost = get_with_default(f_cost, b, default_cost);
         return a_cost < b_cost;
     };
 
     std::unordered_set<Tile *> closed_set;
-    // std::set seems to be measurably faster than std::unordered_set here
-    // more profiling required
-    std::set<Tile *> open_set = { &start };
+    std::unordered_set<Tile *> open_set = { &start };
     std::map<Tile *, Tile *> parent;
 
     g_cost[&start] = 0;
@@ -148,18 +157,18 @@ std::vector<Tile *> TileMap::get_path(
 
             open_set.insert(&neighbour);
 
-            const uint64_t tmp_g_cost = 1 + get_with_default(g_cost, &current, std::numeric_limits<uint64_t>::max());
-            const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, std::numeric_limits<uint64_t>::max());
+            const uint64_t tmp_g_cost = get_with_default(g_cost, &current, default_cost) + neighbour.terrain->path_cost;
+            const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, default_cost);
 
-            if(tmp_g_cost >= neighbour_g_cost) {
+            if(neighbour_g_cost < tmp_g_cost) {
                 continue;
             }
 
             parent[&neighbour] = &current;
             g_cost[&neighbour] = tmp_g_cost;
-            f_cost[&neighbour] = tmp_g_cost + diagonal_movement ?
+            f_cost[&neighbour] = tmp_g_cost + (diagonal_movement ?
                 chebyshev_distance(neighbour, end) :
-                manhattan_distance(neighbour, end);
+                manhattan_distance(neighbour, end));
         }
     }
 

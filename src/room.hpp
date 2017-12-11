@@ -1,12 +1,12 @@
 #pragma once
-#ifndef FEATURE_HPP
-#define FEATURE_HPP
+#ifndef ROOM_HPP
+#define ROOM_HPP
 
 #include <vector>
 
 #include "tile.hpp"
 
-class Feature {
+class Room {
 public:
     enum class Type : unsigned char {
         EntranceRoom,
@@ -16,26 +16,26 @@ public:
         None
     };
 
-    Feature::Type type;
+    Room::Type type;
     std::vector<Tile *> tiles;
     std::vector<Tile *> centre_tiles;
     std::vector<Tile *> edge_tiles;
-    std::vector<Tile *> entrance_tiles;
+    std::vector<Tile *> connection_tiles;
 
     /* Constructor */
-    Feature::Feature(const Feature::Type type=Feature::Type::None);
+    Room::Room(const Room::Type type=Room::Type::None);
 
     /* Default destructor */
-    ~Feature() = default;
+    ~Room() = default;
 
     /* Delete copy constructor */
-    Feature(const Feature &rhs) = delete;
+    Room(const Room &rhs) = delete;
     /* Allow move though */
-    Feature(Feature &&rhs) = default;
+    Room(Room &&rhs) = default;
 
     /* Delete assignment operators */
-    Feature& operator=(const Feature &rhs) = delete;
-    Feature& operator=(Feature &&rhs) = delete;
+    Room& operator=(const Room &rhs) = delete;
+    Room& operator=(Room &&rhs) = delete;
 };
 
-#endif /* FEATURE_HPP */
+#endif /* ROOM_HPP */

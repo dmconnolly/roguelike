@@ -16,7 +16,6 @@ public:
         Tile *entrance;
         Tile *exit;
         std::vector<Tile> tiles;
-        std::map<const Direction, const long> tile_direction_offsets;
     };
 
     TileMap::Data *data;
@@ -40,7 +39,6 @@ public:
 
     /* Get tile in direction from another tile */
     Tile& get(Tile &tile, const Direction direction) const;
-    const Tile& get(const Tile &tile, const Direction direction) const;
 
     /* Returns a path between start and end */
     std::vector<Tile *> get_path(
@@ -56,7 +54,6 @@ public:
 private:
     const unsigned id;
 
-    void init_direction_offsets();
     unsigned manhattan_distance(const Tile &start, const Tile &end) const;
     unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
 };

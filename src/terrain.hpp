@@ -3,6 +3,7 @@
 #define TERRAIN_HPP
 
 #include <map>
+#include <limits>
 
 class Terrain {
 public:
@@ -10,10 +11,12 @@ public:
     bool pathable_flying;
     char ascii_char;
     bool map_edge;
+    unsigned path_cost;
 
     enum class Type : unsigned char {
         MapEdge,
         StoneWall,
+        HardStoneWall,
         StoneFloor,
         StairsUp,
         StairsDown
@@ -24,6 +27,7 @@ public:
         pathable_flying = false;
         ascii_char = '?';
         map_edge = false;
+        path_cost = 5;
 
         switch(type) {
             case Terrain::Type::MapEdge:
@@ -31,26 +35,37 @@ public:
                 pathable_flying = false;
                 ascii_char = 'x';
                 map_edge = true;
+                path_cost = std::numeric_limits<unsigned>::max();
                 break;
             case Terrain::Type::StoneWall:
                 pathable = false;
                 pathable_flying = false;
                 ascii_char = '+';
+                path_cost = 7;
+                break;
+            case Terrain::Type::HardStoneWall:
+                pathable = false;
+                pathable_flying = false;
+                ascii_char = '#';
+                path_cost = 12;
                 break;
             case Terrain::Type::StoneFloor:
                 pathable = true;
                 pathable_flying = true;
                 ascii_char = '.';
+                path_cost = 5;
                 break;
             case Terrain::Type::StairsUp:
                 pathable = true;
                 pathable_flying = true;
                 ascii_char = '<';
+                path_cost = 6;
                 break;
             case Terrain::Type::StairsDown:
                 pathable = true;
                 pathable_flying = true;
                 ascii_char = '>';
+                path_cost = 6;
                 break;
         };
     }

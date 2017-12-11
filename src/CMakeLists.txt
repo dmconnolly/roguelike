@@ -1,4 +1,6 @@
 add_library(roguelike_src_lib
+    fastnoise/FastNoise.h
+    fastnoise/FastNoise.cpp
     window.hpp
     window.cpp
     controller.hpp
@@ -17,8 +19,8 @@ add_library(roguelike_src_lib
     tile_map_base.cpp
     tile_map.hpp
     tile_map.cpp
-    feature.hpp
-    feature.cpp
+    room.hpp
+    room.cpp
     map_generator.hpp
     map_generator.cpp
     random.hpp

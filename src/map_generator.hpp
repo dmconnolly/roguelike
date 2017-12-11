@@ -3,7 +3,7 @@
 #define MAP_GENERATOR_HPP
 
 #include "tile_map.hpp"
-#include "feature.hpp"
+#include "room.hpp"
 
 class MapGenerator {
 public:
@@ -39,19 +39,17 @@ private:
     const static unsigned min_entrance_exit_distance = 15;
 
     TileMap &map;
-    std::vector<Feature> features;
-    std::map<Tile *, Feature *> assigned_tiles;
+    std::vector<Room> features;
+    std::map<Tile *, Room *> assigned_tiles;
 
     void init_map();
-    void add_start_room();
-    void add_features();
-    void correction_pass();
-    void add_exit_stairs();
-
-    bool MapGenerator::try_add_feature();
-    bool feature_fits(const Feature &feature) const;
-    Feature::Type get_feature_type() const;
-    bool add_room_feature(Feature &feature);
+    void add_hard_stone_walls();
+    void place_first_room();
+    void place_all_rooms();
+    void connect_rooms();
+    void add_water();
+    void add_pits();
+    void add_entrance_and_exit();
 };
 
 #endif /* MAP_GENERATOR_HPP */
