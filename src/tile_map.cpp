@@ -110,8 +110,8 @@ std::vector<Tile *> TileMap::get_path(
     const std::vector<Direction> &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;
 
-    std::map<Tile *, uint64_t> g_cost;
-    std::map<Tile *, uint64_t> f_cost;
+    std::unordered_map<Tile *, uint64_t> g_cost;
+    std::unordered_map<Tile *, uint64_t> f_cost;
 
     const auto f_cost_comp = [&f_cost](Tile *a, Tile *b) {
         const uint64_t a_cost = get_with_default(f_cost, a, default_cost);
@@ -121,7 +121,7 @@ std::vector<Tile *> TileMap::get_path(
 
     std::unordered_set<Tile *> closed_set;
     std::unordered_set<Tile *> open_set = { &start };
-    std::map<Tile *, Tile *> parent;
+    std::unordered_map<Tile *, Tile *> parent;
 
     g_cost[&start] = 0;
     f_cost[&start] = diagonal_movement ?

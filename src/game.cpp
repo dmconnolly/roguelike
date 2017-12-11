@@ -15,7 +15,7 @@ void Game::start() {
 
     std::vector<Tile *> path;
 
-    const unsigned loop_count = 1;
+    const unsigned loop_count = 100;
     long long total = 0;
     Tile &start = current_map->get(0, 0);
     Tile &end = current_map->get(99, 49);

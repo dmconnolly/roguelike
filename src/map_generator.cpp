@@ -1,7 +1,7 @@
+#include <unordered_map>
 #include <cstdint>
 #include <limits>
 #include <array>
-#include <map>
 
 #include "fastnoise/FastNoise.h"
 #include "map_generator.hpp"
