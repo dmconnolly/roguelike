@@ -23,4 +23,9 @@ static const std::vector<Direction> cardinal_directions = {
     Direction::South, Direction::West
 };
 
+static const std::vector<Direction> intercardinal_directions = {
+    Direction::NorthEast, Direction::SouthEast,
+    Direction::SouthWest, Direction::NorthWest
+};
+
 #endif /* DIRECTION_HPP */

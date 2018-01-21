@@ -2,35 +2,29 @@
 #ifndef ROOM_HPP
 #define ROOM_HPP
 
-#include <vector>
+#include <unordered_set>
 
 #include "tile.hpp"
 
 class Room {
 public:
-    enum class Type : unsigned char {
-        EntranceRoom,
-        ExitRoom,
-        Room,
-        Corridor,
-        None
-    };
-
-    Room::Type type;
+    std::string name;
+    unsigned width;
+    unsigned height;
+    unsigned char ascii;
     std::vector<Tile *> tiles;
     std::vector<Tile *> centre_tiles;
     std::vector<Tile *> edge_tiles;
     std::vector<Tile *> connection_tiles;
 
     /* Constructor */
-    Room::Room(const Room::Type type=Room::Type::None);
+    Room::Room() = default;
 
     /* Default destructor */
     ~Room() = default;
 
-    /* Delete copy constructor */
+    /* Delete copy constructors */
     Room(const Room &rhs) = delete;
-    /* Allow move though */
     Room(Room &&rhs) = default;
 
     /* Delete assignment operators */

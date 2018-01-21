@@ -44,7 +44,8 @@ public:
     std::vector<Tile *> get_path(
         Tile &start, Tile &end,
         bool (*tile_pathable)(const Tile &),
-        const bool diagonal_movement=false
+        const bool diagonal_movement=false,
+        const bool penalize_turns=true
     ) const;
 
     void save();

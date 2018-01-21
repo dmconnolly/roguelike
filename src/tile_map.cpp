@@ -8,6 +8,7 @@
 #include <set>
 #include <cstdint>
 #include <algorithm>
+#include <execution>
 
 #include "tile_map.hpp"
 
@@ -43,7 +44,7 @@ Tile& TileMap::get(Tile &tile, const Direction direction) const {
             offset = -width;
             break;
         case Direction::NorthEast:
-            offset = -width + 1;
+            offset = (-width) + 1;
             break;
         case Direction::East:
             offset = 1;
@@ -61,7 +62,7 @@ Tile& TileMap::get(Tile &tile, const Direction direction) const {
             offset = -1;
             break;
         case Direction::NorthWest:
-            offset = -width - 1;
+            offset = (-width) - 1;
             break;
     }
     return *(&tile + offset);
@@ -104,19 +105,24 @@ unsigned TileMap::chebyshev_distance(const Tile &start, const Tile &end) const {
 std::vector<Tile *> TileMap::get_path(
     Tile &start, Tile &end,
     bool(*tile_pathable)(const Tile &),
-    const bool diagonal_movement) const
+    const bool diagonal_movement,
+    const bool penalize_turns) const
 {
-    constexpr static const uint64_t default_cost = std::numeric_limits<uint64_t>::max();
+    constexpr static const float diagonal_penalty = 2.0f;
+    constexpr static const float turn_penalty = 1.5f;
+    constexpr static const float default_cost = std::numeric_limits<float>::max();
 
-    const std::vector<Direction> &neighbour_directions =
+    const auto &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;
 
-    std::unordered_map<Tile *, uint64_t> g_cost;
-    std::unordered_map<Tile *, uint64_t> f_cost;
+    Direction last_direction;
+
+    std::unordered_map<Tile *, float> g_cost;
+    std::unordered_map<Tile *, float> f_cost;
 
     const auto f_cost_comp = [&f_cost](Tile *a, Tile *b) {
-        const uint64_t a_cost = get_with_default(f_cost, a, default_cost);
-        const uint64_t b_cost = get_with_default(f_cost, b, default_cost);
+        const float a_cost = get_with_default(f_cost, a, default_cost);
+        const float b_cost = get_with_default(f_cost, b, default_cost);
         return a_cost > b_cost;
     };
 
@@ -126,9 +132,10 @@ std::vector<Tile *> TileMap::get_path(
     open_set.insert(&start);
 
     g_cost[&start] = 0;
-    f_cost[&start] = diagonal_movement ?
+    f_cost[&start] = static_cast<float>(diagonal_movement ?
         chebyshev_distance(start, end) :
-        manhattan_distance(start, end);
+        manhattan_distance(start, end)
+    );
 
     while(!open_set.empty()) {
         const auto current_it = --open_set.end();
@@ -141,7 +148,7 @@ std::vector<Tile *> TileMap::get_path(
                 path.push_back(cur_tile_ptr);
                 cur_tile_ptr = get_with_default(parent, cur_tile_ptr, static_cast<Tile *>(nullptr));
             }
-            std::reverse(path.begin(), path.end());
+            std::reverse(std::execution::par_unseq, path.begin(), path.end());
             return path;
         }
 
@@ -159,9 +166,24 @@ std::vector<Tile *> TileMap::get_path(
             }
 
             open_set.insert(&neighbour);
+            
+            float direction_cost_mod = 1;
+            if(diagonal_movement && std::any_of(std::execution::par_unseq,
+                intercardinal_directions.begin(), intercardinal_directions.end(),
+                [direction](const Direction d) { return d == direction; }))
+            {
+                direction_cost_mod = turn_penalty;
+            }
 
-            const uint64_t tmp_g_cost = get_with_default(g_cost, &current, default_cost) + neighbour.terrain->path_cost;
-            const uint64_t neighbour_g_cost = get_with_default(g_cost, &neighbour, default_cost);
+            float turn_cost = 0;
+            if(penalize_turns && direction != last_direction) {
+                turn_cost = turn_penalty;
+                last_direction = direction;
+            }
+
+            const float tmp_g_cost = get_with_default(g_cost, &current, default_cost) +
+                ((neighbour.terrain->path_cost + turn_cost) * direction_cost_mod);
+            const float neighbour_g_cost = get_with_default(g_cost, &neighbour, default_cost);
 
             if(neighbour_g_cost < tmp_g_cost) {
                 continue;

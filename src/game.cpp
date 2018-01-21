@@ -14,12 +14,12 @@ void Game::start() {
 
     //std::vector<Tile *> path;
 
-    //Tile &start = current_map->get(0, 0);
-    //Tile &end = current_map->get(99, 49);
+    //Tile &start = current_map->get(1, 1);
+    //Tile &end = current_map->get(98, 48);
 
     //path = current_map->get_path(start, end, [](const Tile &tile) {
     //    return true;
-    //}, false);
+    //}, false, true);
 
     //for(auto *tile : path) {
     //    tile->terrain = Terrain::get(Terrain::Type::MapEdge);
