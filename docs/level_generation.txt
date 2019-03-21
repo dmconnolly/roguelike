@@ -1,42 +1,40 @@
-Level generation: -
-
 1) Initialise the map with a set size.
-1.1) Create a border around the outside of the map of MAP_EDGE tiles which is impassible by both
-     level generation and the player.
-1.2) Initialise the rest of the tiles as ROCK_WALL.
+    1.1) Create a border around the outside of the map of MAP_EDGE tiles which is impassible by both level generation and the player.
+    1.2) Initialise the rest of the tiles as ROCK_WALL.
 2) Select random areas of the map to be HARD_ROCK_WALL (perlin noise?).
 3) Place a large room in a random location on the map.
 4) Place other rooms on the map
-4.1) Consider the map from each direction in turn (North, East, South, West) starting at random.
-4.2) Pick a room type at random and try to slide it into the map from the chosen direction.
-4.3) Leave a buffer area around each room of 3-5 tiles.
-4.4) Until placing rooms fails from each side, return to step 4.1.
+    4.1) Consider the map from each direction in turn (North, East, South, West) starting at random.
+    4.2) Pick a room type at random and try to slide it into the map from the chosen direction.
+    4.3) Leave a buffer area around each room of 3-5 tiles.
+    4.4) Until placing rooms fails from each side, return to step 4.1.
 5) Connect the rooms together
-5.1) Start with a random room and connect it to another random room.
-5.1.1) Keep track of which rooms have been connected to the center of the initially selected room.
-5.2.2) Attempt to connect an unconnected room with any other room.
-5.2.3) If there is no path, select another room until it succeeds.
-5.2.4) If it still does no succeed, return to step 1.
-5.2) Connect unconnected rooms to the center of the initially chosen room.
-5.2.1) Pick a random unconnected room.
-5.2.2) Pick a random room which has already been connected.
-5.2.3) Attempt to connect the two rooms, on fail, return to step 5.2.2 until every room is tried.
-5.2.3) If every room has been tried unsuccessfully, replace the room with ROCK_WALL.
+    5.1) Keep track of which rooms have been connected to the center of the initially selected room.
+    5.2) Start with a random room and connect it to another random room.
+        5.2.1) Pick a random unconnected room (source).
+        5.2.2) Pick any other room (target).
+        5.2.1) Attempt to connect the center tiles of the two rooms together with a tunnel (see 'Pathing' section)
+        5.2.2) If there is no path...
+            5.2.2.1) If there are target rooms still to try, return to step 5.2.2
+            5.2.2.2) Else, return to step 1 (alternatively, replace the room with HARD_ROCK_WALL and remove it from the list of rooms)
+    5.3) If there are unconnected rooms, return to step 5.2
 6) Select random areas of the map to be WATER (perlin noise?).
 7) Select random areas of the map to be PIT (perlin noise?).
-8) Select entrance and exit locations - ensure that there is a path between these without traversing
-   any pits.
-Notes) Rooms and tunnels created overwrite HARD_ROCK_WALL but not WATER, LAVA or PIT.
+8) Select entrance and exit locations.
+    8.1) Pick a random entrance tile
+    8.2) Pick a random exit tile
+    8.3) Check if there is a path between these tiles without traversing any pits; if not, return to 8.1.
+    8.4) Check if the path length is less than a minimum distance; if not, return to 8.1.
 
 
-Pathing for use in level generation: -
+Pathing : -
 
-1) Pathing for tunnels will have a penalty cost for moving through ROCK_WALL tiles.
-   Should encourage pathing to use existing tunnels to connect rooms and form intersections.
-2) Pathing for tunnels will have an additional penalty cost for moving through HARD_ROCK_WALL tiles.
-   This should allow them to meander a little and not be perfectly straight.
-3) Pathing for tunnels will have a penalty cost for changing direction to prefer straighter lines
-   and avoid drawing diagonals by switching direction on every tile.
+1) Pathing for tunnels will have a penalty cost for moving through ROCK_WALL tiles; should encourage pathing to use existing tunnels to connect rooms and form intersections.
+2) Pathing for tunnels will have an additional penalty cost for moving through HARD_ROCK_WALL tiles; this should allow them to meander a little and not be perfectly straight.
+3) Pathing for tunnels will have a penalty cost for changing direction to prefer straighter lines and avoid drawing diagonals by switching direction on every tile.
 4) Pathing for tunnels cannot traverse lava.
-5) Limiting each direction to its 'half' of the map (can't rooms slide past the middle) would allow
-   for many optimisation opportunities such as running two threads in parallel from opposing sides.
+
+Notes : -
+
+1) Rooms and tunnels created overwrite HARD_ROCK_WALL but not WATER, LAVA or PIT.
+2) Limiting each direction to its 'half' of the map (can't rooms slide past the middle) might allow for optimisation such as running two threads in parallel from opposing sides.
