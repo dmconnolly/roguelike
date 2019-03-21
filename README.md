@@ -1,6 +1,6 @@
 # Roguelike
 
-May need to install : -
+On Linux, the following packages might be necessary : -
 
 libglfw3-dev
 libxinerama-dev
