@@ -5,6 +5,7 @@
 #include <limits>
 #include <functional>
 #include <unordered_set>
+#include <unordered_map>
 #include <set>
 #include <cstdint>
 #include <algorithm>
@@ -166,7 +167,7 @@ std::vector<Tile *> TileMap::get_path(
             }
 
             open_set.insert(&neighbour);
-            
+
             float direction_cost_mod = 1;
             if(diagonal_movement && std::any_of(std::execution::par_unseq,
                 intercardinal_directions.begin(), intercardinal_directions.end(),

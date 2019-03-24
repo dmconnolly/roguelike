@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
-project(roguelike_main)
+cmake_minimum_required(VERSION 3.9)
 
 OPTION(USE_CLANG "build application with clang" ON)
 
@@ -21,6 +20,8 @@ if(MSVC)
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 endif()
+
+project(roguelike)
 
 # GLFW
 set(GLFW_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
