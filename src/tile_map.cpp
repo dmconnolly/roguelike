@@ -109,9 +109,9 @@ std::vector<Tile *> TileMap::get_path(
     const bool diagonal_movement,
     const bool penalize_turns) const
 {
-    constexpr static const float diagonal_penalty = 2.0f;
-    constexpr static const float turn_penalty = 1.5f;
-    constexpr static const float default_cost = std::numeric_limits<float>::max();
+    constexpr static float diagonal_penalty = 2.0f;
+    constexpr static float turn_penalty = 1.5f;
+    constexpr static float default_cost = std::numeric_limits<float>::max();
 
     const auto &neighbour_directions =
         diagonal_movement ? directions : cardinal_directions;

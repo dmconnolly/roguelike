@@ -120,91 +120,68 @@ void MapGenerator::place_first_room() {
 }
 
 void MapGenerator::place_all_rooms() {
-    const static Terrain * const wall = Terrain::get(Terrain::Type::StoneWall);
-    const static Terrain * const floor = Terrain::get(Terrain::Type::StoneFloor);
+    static const Terrain * const wall = Terrain::get(Terrain::Type::StoneWall);
+    static const Terrain * const floor = Terrain::get(Terrain::Type::StoneFloor);
 
     for(unsigned consecutive_fails=0; consecutive_fails<cardinal_directions.size();) {
         for(auto direction : cardinal_directions) {
             const unsigned width = Random::between(min_room_width, max_room_width);
             const unsigned height = Random::between(min_room_width, max_room_width);
 
+            bool success = false;
+            unsigned bot_y;
+            unsigned top_y;
+            unsigned left_x;
+            unsigned right_x;
+
             if(direction == Direction::South) {
-                const unsigned left_x = Random::between(room_buffer, (map.data->width - (room_buffer + width)) - 1);
-                const unsigned right_x = left_x + (width - 1);
                 const unsigned y_limit = (map.data->height + 1) / 2;
 
-                unsigned bot_y = map.data->height-1;
-                unsigned top_y = bot_y-height;
+                left_x = Random::between(room_buffer, (map.data->width - (room_buffer + width)) - 1);
+                right_x = left_x + (width - 1);
 
-                bool success = false;
+                bot_y = map.data->height-1;
+                top_y = bot_y-height;
+
                 for(unsigned tmp_top_y=top_y; tmp_top_y>=y_limit; --tmp_top_y) {
-                   bool fits = true;
+                    bool fits = true;
 
-                   if(!success) {
-                       // First iteration so check full area around room for overlap
-                       for(unsigned y=tmp_top_y-room_buffer; y<=bot_y && fits; ++y) {
-                           for(unsigned x=left_x-room_buffer; x<=right_x+room_buffer && fits; ++x) {
-                               if(assigned_tiles.count(&map.get(x, y))) {
-                                   fits = false;
-                               }
-                           }
-                       }
-                   } else {
-                       // Only check leading edge each of room as it slides into place
-                       unsigned y = tmp_top_y - room_buffer;
-                       for(unsigned x=left_x-room_buffer; x<=right_x+room_buffer && fits; ++x) {
-                           if(assigned_tiles.count(&map.get(x, y))) {
-                               fits = false;
-                           }
-                       }
-                   }
+                        if(!success) {
+                           // First iteration so check full area around room for overlap
+                            for(unsigned y=tmp_top_y-room_buffer; y<=bot_y && fits; ++y) {
+                                for(unsigned x=left_x-room_buffer; x<=right_x+room_buffer && fits; ++x) {
+                                    if(assigned_tiles.count(&map.get(x, y))) {
+                                        fits = false;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Only check leading edge each of room as it slides into place
+                            unsigned y = tmp_top_y - room_buffer;
+                            for(unsigned x=left_x-room_buffer; x<=right_x+room_buffer && fits; ++x) {
+                                if(assigned_tiles.count(&map.get(x, y))) {
+                                    fits = false;
+                                }
+                            }
+                        }
 
                    if(fits) {
-                       --top_y;
-                       --bot_y;
-                       success = true;
-                   } else {
-                       break;
-                   }
-                }
-
-                if(success) {
-                   const unsigned connection_tiles = Random::between(min_room_connection_tiles, max_room_connection_tiles);
-                   Room room;
-
-                   for(unsigned y=top_y; y<=bot_y; ++y) {
-                       for(unsigned x=left_x; x<=right_x; ++x) {
-                           Tile &tile = map.get(x, y);
-
-                           assigned_tiles.insert(&tile);
-                           room.tiles.push_back(&tile);
-
-                           if(x==left_x || x==right_x || y==top_y || y==bot_y) {
-                               room.edge_tiles.push_back(&tile);
-                               tile.terrain = wall;
-                           } else {
-                               room.centre_tiles.push_back(&tile);
-                               tile.terrain = floor;
-                           }
-                       }
-                   }
-
-                   rooms.push_back(std::move(room));
-                   consecutive_fails = 0;
-                } else {
-                   ++consecutive_fails;
+                        --top_y;
+                        --bot_y;
+                        success = true;
+                    }
                 }
             } else if(direction == Direction::West) {
 
             } else if(direction == Direction::North) {
-                const unsigned left_x = Random::between(room_buffer, (map.data->width - (room_buffer + width)) - 1);
-                const unsigned right_x = left_x + (width - 1);
                 const unsigned y_limit = (map.data->height - 1) / 2;
 
-                unsigned top_y = 0;
-                unsigned bot_y = top_y + (height - 1);
+                left_x = Random::between(room_buffer, (map.data->width - (room_buffer + width)) - 1);
+                right_x = left_x + (width - 1);
 
-                bool success = false;
+                top_y = 0;
+                bot_y = top_y + (height - 1);
+
                 for(unsigned tmp_bot_y=bot_y; tmp_bot_y<y_limit; ++tmp_bot_y) {
                     bool fits = true;
 
@@ -231,39 +208,37 @@ void MapGenerator::place_all_rooms() {
                         ++top_y;
                         ++bot_y;
                         success = true;
-                    } else {
-                        break;
                     }
-                }
-
-                if(success) {
-                    const unsigned connection_tiles = Random::between(min_room_connection_tiles, max_room_connection_tiles);
-                    Room room;
-
-                    for(unsigned y=top_y; y<=bot_y; ++y) {
-                        for(unsigned x=left_x; x<=right_x; ++x) {
-                            Tile &tile = map.get(x, y);
-
-                            assigned_tiles.insert(&tile);
-                            room.tiles.push_back(&tile);
-
-                            if(x==left_x || x==right_x || y==top_y || y==bot_y) {
-                                room.edge_tiles.push_back(&tile);
-                                tile.terrain = wall;
-                            } else {
-                                room.centre_tiles.push_back(&tile);
-                                tile.terrain = floor;
-                            }
-                        }
-                    }
-
-                    rooms.push_back(std::move(room));
-                    consecutive_fails = 0;
-                } else {
-                    ++consecutive_fails;
                 }
             } else if(direction == Direction::East) {
 
+            }
+
+            if(success) {
+                const unsigned connection_tiles = Random::between(min_room_connection_tiles, max_room_connection_tiles);
+                Room room;
+
+                for(unsigned y=top_y; y<=bot_y; ++y) {
+                    for(unsigned x=left_x; x<=right_x; ++x) {
+                        Tile &tile = map.get(x, y);
+
+                        assigned_tiles.insert(&tile);
+                        room.tiles.push_back(&tile);
+
+                        if(x==left_x || x==right_x || y==top_y || y==bot_y) {
+                            room.edge_tiles.push_back(&tile);
+                            tile.terrain = wall;
+                        } else {
+                            room.centre_tiles.push_back(&tile);
+                            tile.terrain = floor;
+                        }
+                    }
+                }
+
+                rooms.push_back(std::move(room));
+                consecutive_fails = 0;
+            } else {
+                ++consecutive_fails;
             }
         }
     }
