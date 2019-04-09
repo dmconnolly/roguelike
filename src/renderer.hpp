@@ -14,4 +14,4 @@ private:
     glm::ivec2 window_size;
 };
 
-#endif /* RENDERER */
+#endif // RENDERER

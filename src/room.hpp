@@ -17,19 +17,19 @@ public:
     std::vector<Tile *> edge_tiles;
     std::vector<Tile *> connection_tiles;
 
-    /* Constructor */
+    // Constructor
     Room::Room() = default;
 
-    /* Default destructor */
+    // Default destructor
     ~Room() = default;
 
-    /* Delete copy constructors */
+    // Delete copy constructors
     Room(const Room &rhs) = delete;
     Room(Room &&rhs) = default;
 
-    /* Delete assignment operators */
+    // Delete assignment operators
     Room& operator=(const Room &rhs) = delete;
     Room& operator=(Room &&rhs) = delete;
 };
 
-#endif /* ROOM_HPP */
+#endif // ROOM_HPP

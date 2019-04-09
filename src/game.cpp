@@ -2,7 +2,7 @@
 #include "map_generator.hpp"
 
 Game::Game() {
-    /* Empty */
+    // Empty
 }
 
 void Game::start() {
@@ -29,5 +29,5 @@ void Game::start() {
 }
 
 void Game::step() {
-    /* TODO */
+    // TODO
 }

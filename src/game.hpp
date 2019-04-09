@@ -9,11 +9,11 @@ public:
     Game();
     ~Game() = default;
 
-    /* Delete copy constructors operators */
+    // Delete copy constructors operators
     Game(const Game &rhs) = delete;
     Game(Game &&rhs) = delete;
 
-    /* Delete implicit assignment operators */
+    // Delete implicit assignment operators
     Game& operator=(const Game &rhs) = delete;
     Game& operator=(Game &&rhs) = delete;
 
@@ -26,4 +26,4 @@ private:
     unsigned map_id = 0;
 };
 
-#endif /* GAME_HPP */
+#endif // GAME_HPP

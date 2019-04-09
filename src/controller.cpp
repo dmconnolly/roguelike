@@ -29,11 +29,11 @@ void Controller::key_input(const int key, const int scan_code,
         return;
     }
 
-    /* Do something with key */
+    // Do something with key
 }
 
 void Controller::mouse_click(const int button, const int action,
     const int mods, const double x_pos, const double y_pos)
 {
-    /* Empty */
+    // Empty
 }

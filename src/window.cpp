@@ -7,7 +7,7 @@
 Window::Window() :
     title("Roguelike")
 {
-    /* Empty */
+    // Empty
 }
 
 /// Initialises the window

@@ -7,17 +7,17 @@
 
 class MapGenerator {
 public:
-    /* Constructor */
+    // Constructor
     MapGenerator(TileMap &map);
 
-    /* Default destructor */
+    // Default destructor
     ~MapGenerator() = default;
 
-    /* Delete copy constructors */
+    // Delete copy constructors
     MapGenerator(const MapGenerator &rhs) = delete;
     MapGenerator(MapGenerator &&rhs) = delete;
 
-    /* Delete assignment operators */
+    // Delete assignment operators
     MapGenerator& operator=(const MapGenerator &rhs) = delete;
     MapGenerator& operator=(MapGenerator &&rhs) = delete;
 
@@ -47,4 +47,4 @@ private:
     void add_entrance_and_exit();
 };
 
-#endif /* MAP_GENERATOR_HPP */
+#endif // MAP_GENERATOR_HPP

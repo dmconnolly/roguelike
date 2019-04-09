@@ -28,4 +28,4 @@ static const std::vector<Direction> intercardinal_directions = {
     Direction::SouthWest, Direction::NorthWest
 };
 
-#endif /* DIRECTION_HPP */
+#endif // DIRECTION_HPP

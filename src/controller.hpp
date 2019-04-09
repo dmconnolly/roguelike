@@ -15,15 +15,15 @@ public:
     Controller(const int width, const int height);
     ~Controller() = default;
 
-    /* Delete copy constructors operators */
+    // Delete copy constructors operators
     Controller(const Controller &rhs) = delete;
     Controller(Controller &&rhs) = delete;
 
-    /* Delete implicit assignment operators */
+    // Delete implicit assignment operators
     Controller& operator=(const Controller &rhs) = delete;
     Controller& operator=(Controller &&rhs) = delete;
 
-    /* Event handlers */
+    // Event handlers
     void window_resize(const int width, const int height);
     void key_input(const int key, const int scan_code,
         const int mods, const int action
@@ -37,9 +37,9 @@ private:
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<GameController> game_controller;
 
-    /* Keys pressed on current frame */
+    // Keys pressed on current frame
     const static unsigned int max_keys = 348;
     std::array<bool, max_keys> keys = { false };
 };
 
-#endif /* CONTROLLER_HPP */
+#endif // CONTROLLER_HPP

@@ -20,27 +20,27 @@ public:
 
     TileMap::Data *data;
 
-    /* Constructor */
+    // Constructor
     TileMap(const unsigned width, const unsigned height);
 
-    /* Destructor */
+    // Destructor
     ~TileMap();
 
-    /* Delete copy constructors */
+    // Delete copy constructors
     TileMap(const TileMap &rhs) = delete;
     TileMap(TileMap &&rhs) = delete;
 
-    /* Delete implicit assignment operators */
+    // Delete implicit assignment operators
     TileMap& operator=(const TileMap &rhs) = delete;
     TileMap& operator=(TileMap &&rhs) = delete;
 
-    /* Get tile by index */
+    // Get tile by index
     Tile& get(const unsigned x, const unsigned y) const;
 
-    /* Get tile in direction from another tile */
+    // Get tile in direction from another tile
     Tile& get(Tile &tile, const Direction direction) const;
 
-    /* Returns a path between start and end */
+    // Returns a path between start and end
     std::vector<Tile *> get_path(
         Tile &start, Tile &end,
         bool (*tile_pathable)(const Tile &),
@@ -59,4 +59,4 @@ private:
     unsigned chebyshev_distance(const Tile &start, const Tile &end) const;
 };
 
-#endif /* TILE_MAP_HPP */
+#endif // TILE_MAP_HPP

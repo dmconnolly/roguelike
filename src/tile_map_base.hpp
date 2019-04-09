@@ -9,4 +9,4 @@ protected:
     static std::atomic<unsigned> map_count;
 };
 
-#endif /* TILE_MAP_BASE_HPP */
+#endif // TILE_MAP_BASE_HPP

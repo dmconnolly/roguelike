@@ -15,7 +15,7 @@ GameController::GameController(Renderer &renderer) :
 void GameController::mouse_click(const int button, const int action,
     const int mods, const double x_pos, const double y_pos)
 {
-    /* Empty */
+    // Empty
 }
 
 void GameController::key_input(const int key, const int scan_code,

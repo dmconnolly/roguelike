@@ -15,7 +15,7 @@ MapGenerator::MapGenerator(TileMap &map) :
     rooms(),
     assigned_tiles()
 {
-    /* Empty */
+    // Empty
 }
 
 void MapGenerator::build() {
@@ -245,17 +245,17 @@ void MapGenerator::place_all_rooms() {
 }
 
 void MapGenerator::connect_rooms() {
-    /* TODO */
+    // TODO
 }
 
 void MapGenerator::add_water() {
-    /* TODO */
+    // TODO
 }
 
 void MapGenerator::add_pits() {
-    /* TODO */
+    // TODO
 }
 
 void MapGenerator::add_entrance_and_exit() {
-    /* TODO */
+    // TODO
 }

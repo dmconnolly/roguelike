@@ -79,4 +79,4 @@ private:
     static const std::map<const Terrain::Type, const Terrain> all;
 };
 
-#endif /* TERRAIN_HPP */
+#endif // TERRAIN_HPP

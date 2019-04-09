@@ -18,11 +18,11 @@ public:
     Window();
     ~Window() = default;
 
-    /* Delete copy constructors operators */
+    // Delete copy constructors operators
     Window(const Window &rhs) = delete;
     Window(Window &&rhs) = delete;
 
-    /* Delete implicit assignment operators */
+    // Delete implicit assignment operators
     Window& operator=(const Window &rhs) = delete;
     Window& operator=(Window &&rhs) = delete;
 
@@ -43,4 +43,4 @@ private:
     static void mouse_click_callback(GLFWwindow *, int, int, int);
 };
 
-#endif /* WINDOW_HPP */
+#endif // WINDOW_HPP

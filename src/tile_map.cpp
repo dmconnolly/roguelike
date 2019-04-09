@@ -29,7 +29,7 @@ TileMap::TileMap(const unsigned width, const unsigned height) :
 }
 
 TileMap::~TileMap() {
-    /* Empty */
+    // Empty
 }
 
 Tile& TileMap::get(const unsigned x, const unsigned y) const {
@@ -75,7 +75,7 @@ void TileMap::save() {
 }
 
 void TileMap::load() {
-    /* TODO - load from file */
+    // TODO - load from file
 }
 
 void TileMap::print() const {

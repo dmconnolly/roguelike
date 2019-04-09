@@ -6,7 +6,7 @@ Tile::Tile(const unsigned x, const unsigned y, const Terrain *terrain) :
     terrain(terrain),
     discovered(false)
 {
-    /* Empty */
+    // Empty
 }
 
 Tile::Tile(const Tile &rhs) :
@@ -15,7 +15,7 @@ Tile::Tile(const Tile &rhs) :
     y(rhs.y),
     terrain(rhs.terrain)
 {
-    /* Empty */
+    // Empty
 }
 
 Tile::Tile(Tile &&rhs) :
@@ -24,5 +24,5 @@ Tile::Tile(Tile &&rhs) :
     y(rhs.y),
     terrain(rhs.terrain)
 {
-    /* Empty */
+    // Empty
 }
