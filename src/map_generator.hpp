@@ -27,10 +27,12 @@ private:
     const static unsigned min_room_width = 6;
     const static unsigned max_room_width = 8;
 
-    const static unsigned room_buffer = 2;
+    const static unsigned room_buffer = 1;
 
     const static unsigned min_room_connection_tiles = 1;
     const static unsigned max_room_connection_tiles = 3;
+
+    const static unsigned max_consecutive_failed_room_placements = 8;
 
     TileMap &map;
     std::vector<Room> rooms;
@@ -39,8 +41,8 @@ private:
     void init_map();
     void add_hard_stone_walls();
     void place_first_room();
-    void place_room();
-    void place_all_rooms();
+    void fill_with_rooms();
+    bool place_room_from_direction(const Direction direction);
     void connect_rooms();
     void add_water();
     void add_pits();

@@ -15,7 +15,7 @@ public:
     std::vector<Tile *> tiles;
     std::vector<Tile *> centre_tiles;
     std::vector<Tile *> edge_tiles;
-    std::vector<Tile *> connection_tiles;
+    Tile *connection_tile;
 
     // Constructor
     Room::Room() = default;
